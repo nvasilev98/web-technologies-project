@@ -12,3 +12,16 @@ services:
       - "8080:80"
     volumes:
       - ./src/:/var/www/html/
+  db:
+    image: mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: "@dm1n"
+    volumes:
+      - ./scripts:/docker-entrypoint-initdb.d
+      - persistent:/var/lib/mysql
+volumes:
+  persistent:

@@ -6,7 +6,7 @@
 <form method="post">
 
     <label for="version"> PHP Version
-        <select name="version">
+        <select name="version" id="version">
             <option value="8">8</option>
             <option value="7.4">7.4</option>
             <option value="7.3">7.3</option>
