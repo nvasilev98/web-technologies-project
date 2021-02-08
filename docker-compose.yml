@@ -16,10 +16,12 @@ services:
     image: mysql
     ports:
       - "3307:3306"
+    env_file:
+      - .env
     environment:
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: admin
-      MYSQL_ROOT_PASSWORD: "@dm1n"
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - ./scripts:/docker-entrypoint-initdb.d
       - persistent:/var/lib/mysql
