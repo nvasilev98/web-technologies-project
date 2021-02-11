@@ -2,9 +2,9 @@
 
 <div>
     <button>
-        <a href="create.html">Create</a>
+        <a href="create.php">Create</a>
     </button>
     <button>
-        <a href="vhosts.html">Update</a>
+        <a href="update.php">Update</a>
     </button>
 </div>
