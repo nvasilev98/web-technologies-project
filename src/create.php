@@ -1,39 +1,15 @@
-<?php
-session_start();
-
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
-    exit;
-}
-?>
-
-<html>
-<title>ЕNA Project</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="css/main.css">
-<body>
-<div class="w3-top">
-    <div class="w3-bar w3-white w3-wide w3-padding w3-card">
-        <a href="#home" class="w3-bar-item w3-button"><b>ENA</b> Project</a>
-        <div class="w3-right w3-hide-small">
-            <a href="create.php" class="w3-bar-item w3-button">Create</a>
-            <a href="update.php" class="w3-bar-item w3-button">Edit</a>
-            <a href="history.php" class="w3-bar-item w3-button">History</a>
-            <a href="logout.php" class="w3-bar-item w3-button">Sign Out</a>
-
-        </div>
-    </div>
-</div>
+<?php include 'header.php';?>
+<form id="form" method="post" action="generate.php">
 <div class="w3-content w3-padding" style="max-width:1564px">
     <div class="tab w3-container w3-padding-32">
         <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16"> General</h3>
+
         <div>
             <label for="name"> Name of the project:
                 <input class="w3-input w3-section w3-border" type="text" name="name" id="name">
             </label>
         </div>
+
         <div>
             <label for="php-version">
                 PHP Version:
@@ -46,6 +22,16 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 </select>
             </label>
         </div>
+
+        <div>
+        <label for="server">
+            Server
+        <select class="w3-input w3-section w3-border" name="server" id="server">
+                <option value="apache">Apache</option>
+                <option value="nginx">Nginx</option>
+            </select>
+        </div>
+
         <div>
             <label for="apache-version">
                 Apache Version:
@@ -56,6 +42,18 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 </select>
             </label>
         </div>
+
+        <div>
+        <label for="nginx-version">
+                    Nginx Version:
+                    <select class="w3-input w3-section w3-border" name="nginx-version" id="nginx-version">
+                        <option value="2.4">2.4</option>
+                        <option value="2.2">2.2</option>
+                        <option value="2">2</option>
+                    </select>
+                </label>
+        </div>
+
         <div>
             <label for="mysql-version">
                 MySQL Version:
@@ -67,30 +65,65 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 </select>
             </label>
         </div>
+
     </div>
+
     <div class="tab w3-container w3-padding-32">
         <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16"> Apache</h3>
         <div>
-            <label for="host"> Hostname:
-                <input class="w3-input w3-section w3-border" type="text" name="host" id="host">
+            <label for="apache-host"> Hostname:
+                <input class="w3-input w3-section w3-border" type="text" name="apache-host" id="apache-host">
             </label>
         </div>
+
         <div>
-            <label for="port"> Port:
-                <input class="w3-input w3-section w3-border" type="text" name="port" id="port">
+            <label for="apache-port"> Port:
+                <input class="w3-input w3-section w3-border" type="text" name="apache-port" id="apache-port">
             </label>
         </div>
+
         <div>
-            <label for="error-log-dir"> Error log directory:
-                <input class="w3-input w3-section w3-border" type="text" name="error-log-dir" id="error-log-dir">
+            <label for="apache-error-log-dir"> Error log directory:
+                <input class="w3-input w3-section w3-border" type="text" name="apache-error-log-dir" id="apache-error-log-dir">
             </label>
         </div>
+
         <div>
-            <label for="custom-log-dir"> Error log directory:
-                <input class="w3-input w3-section w3-border" type="text" name="custom-log-dir" id="custom-log-dir">
+            <label for="apache-custom-log-dir"> Error log directory:
+                <input class="w3-input w3-section w3-border" type="apache-text" name="apache-custom-log-dir" id="apache-custom-log-dir">
             </label>
         </div>
+        
     </div>
+
+    <div class="tab w3-container w3-padding-32">
+        <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16"> Nginx</h3>
+        <div>
+            <label for="nginx-host"> Hostname:
+                <input class="w3-input w3-section w3-border" type="text" name="nginx-host" id="nginx-host">
+            </label>
+        </div>
+
+        <div>
+            <label for="nginx-port"> Port:
+                <input class="w3-input w3-section w3-border" type="text" name="nginx-port" id="nginx-port">
+            </label>
+        </div>
+
+        <div>
+            <label for="nginx-error-log-dir"> Error log directory:
+                <input class="w3-input w3-section w3-border" type="text" name="nginx-error-log-dir" id="nginx-error-log-dir">
+            </label>
+        </div>
+
+        <div>
+            <label for="nginx-custom-log-dir"> Error log directory:
+                <input class="w3-input w3-section w3-border" type="text" name="nginx-custom-log-dir" id="nginx-custom-log-dir">
+            </label>
+        </div>
+
+    </div>
+
     <div class="tab w3-container w3-padding-32">
         <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16"> MySql</h3>
         <label for="configuration-type">
@@ -127,22 +160,22 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             </label>
         </div>
     </div>
+    </form>
     <div style="overflow:auto;">
         <div style="float:right;">
-            <button class="w3-button w3-black w3-section" type="submit" id="prevBtn" onclick="nextPrev(-1)">
+            <button class="w3-button w3-black w3-section" type="button" id="prevBtn" onclick="nextPrev(-1)">
                 <i class="fa fa-paper-plane"></i> Previous
             </button>
-            <button class="w3-button w3-black w3-section" type="submit" id="nextBtn" onclick="nextPrev(1)">
+            <button class="w3-button w3-black w3-section" type="button" id="nextBtn" onclick="nextPrev(1)">
                 <i class="fa fa-paper-plane"></i> Next
             </button>
         </div>
     </div>
+
     <div style="text-align:center;margin-top:40px;">
         <span class="step"></span>
         <span class="step"></span>
         <span class="step"></span>
     </div>
-</body>
-</html>
 <script src="js/main.js"></script>
 <script></script>

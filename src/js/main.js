@@ -24,7 +24,7 @@ function nextPrev(n) {
     x[currentTab].style.display = "none";
     currentTab = currentTab + n;
     if (currentTab >= x.length) {
-        //document.getElementById("createForm").submit();
+        document.getElementById("form").submit();
         return false;
     }
     showTab(currentTab);
