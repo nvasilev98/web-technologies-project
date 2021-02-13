@@ -15,14 +15,25 @@ try {
   $pdo->query($usedb);
   echo "Using database webproject<br>";
 
-  $sql = "CREATE TABLE IF NOT EXISTS users (
+  $usersdb = "CREATE TABLE IF NOT EXISTS users (
           id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
           username VARCHAR(50) NOT NULL UNIQUE,
           password VARCHAR(255) NOT NULL
           );";
 
-  $pdo->exec($sql);
-  echo "Table USERS is active!";
+  $pdo->exec($usersdb);
+  echo "Table USERS is active!<br>";
+
+  $filesdb = "CREATE TABLE IF NOT EXISTS files (
+            id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            file VARCHAR(50) NOT NULL,
+            created_by VARCHAR(50) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            );";
+
+  $pdo->exec($filesdb);
+
+  echo "Table FILES is active!<br>";
 } catch(PDOException $e) {
   echo $sql . "<br>" . $e->getMessage();
 }
