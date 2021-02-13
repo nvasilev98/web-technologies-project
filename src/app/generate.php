@@ -1,7 +1,7 @@
 <?php
 
 const phpDockerfile =
-    "FROM php:{{php-version}}-fpm
+"FROM php:{{php-version}}-fpm
 RUN docker-php-ext-install mysqli
 RUN docker-php-ext-install pdo pdo_mysql";
 
@@ -11,7 +11,7 @@ function generatePhpDockerfile($version)
 }
 
 const apacheConf =
-    "LoadModule deflate_module /usr/local/apache2/modules/mod_deflate.so
+"LoadModule deflate_module /usr/local/apache2/modules/mod_deflate.so
 LoadModule proxy_module /usr/local/apache2/modules/mod_proxy.so
 LoadModule proxy_fcgi_module /usr/local/apache2/modules/mod_proxy_fcgi.so
 
@@ -34,7 +34,8 @@ ServerName {{server-name}}
     ErrorLog {{error-log}}
 </VirtualHost>";
 
-function generateApacheConfFile($host, $port, $errorLog, $customLog) {
+function generateApacheConfFile($host, $port, $errorLog, $customLog)
+{
     if (isBlank($customLog)) {
         // stdout
         $customLog = "/proc/self/fd/1";
@@ -53,7 +54,7 @@ function generateApacheConfFile($host, $port, $errorLog, $customLog) {
 }
 
 const apacheDockerfile =
-    "FROM httpd:{{apache-version}}-alpine
+"FROM httpd:{{apache-version}}-alpine
 RUN apk update; \
     apk upgrade;
 
@@ -64,7 +65,8 @@ COPY demo.apache.conf /usr/local/apache2/conf/demo.apache.conf
 RUN echo \"Include /usr/local/apache2/conf/demo.apache.conf\" \
     >> /usr/local/apache2/conf/httpd.conf";
 
-function generateApacheDockerfile($version, $errorLog, $customLog) {
+function generateApacheDockerfile($version, $errorLog, $customLog)
+{
     $errorLogDir = getDirectory($errorLog);
     $customLogDir = getDirectory($customLog);
 
@@ -81,7 +83,8 @@ const nginxDockerFile =
 RUN [\"/bin/bash\", \"-c\", \"[ ! -d '{{error-log}}' ] && mkdir -p /{{error-log}}\"]
 RUN [\"/bin/bash\", \"-c\", \"[ ! -d '{{custom-log}}' ] && mkdir -p /{{custom-log}}\"]";
 
-function generateNginxDockerfile($nginxVersion, $errorLog, $customLog) {
+function generateNginxDockerfile($nginxVersion, $errorLog, $customLog)
+{
     $errorLog = getDirectory($errorLog);
 
     $content = str_replace('{{version}}', $nginxVersion, nginxDockerFile);
@@ -124,7 +127,8 @@ const proxyPassLocation =
         proxy_pass http://php;
     }";
 
-function generateNginxConf($hostname, $errorLog, $accessLog, $useLb, $serverCount) {
+function generateNginxConf($hostname, $errorLog, $accessLog, $useLb, $serverCount)
+{
     if (isBlank($errorLog)) {
         $errorLog = "/var/log/nginx/error.log";
     }
@@ -153,15 +157,18 @@ function generateNginxConf($hostname, $errorLog, $accessLog, $useLb, $serverCoun
     return $content;
 }
 
-function isBlank($str) {
+function isBlank($str)
+{
     return !isset($str) || trim($str) === '';
 }
 
-function isDir($dir) {
+function isDir($dir)
+{
     return $dir === "/" || preg_match('/^\/[\w\-\/]+$/', $dir) == 1;
 }
 
-function getDirectory($str) {
+function getDirectory($str)
+{
     $split = explode("/", $str);
     array_pop($split);
     return implode("/", $split);
