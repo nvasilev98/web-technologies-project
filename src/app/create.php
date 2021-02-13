@@ -26,7 +26,7 @@
             <div>
                 <label for="server">
                     Server
-                    <select class="w3-input w3-section w3-border" name="server" id="server">
+                    <select class="w3-input w3-section w3-border" name="server" id="server" onchange="changeServer()">
                         <option value="apache">Apache</option>
                         <option value="nginx">Nginx</option>
                     </select>
@@ -69,63 +69,67 @@
         </div>
 
         <div class="tab w3-container w3-padding-32">
-            <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16"> Apache</h3>
-            <div>
-                <label for="apache-host"> Hostname:
-                    <input class="w3-input w3-section w3-border" type="text" name="apache-host" id="apache-host">
-                </label>
+
+            <div id="apacheDiv">
+                <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16"> Apache</h3>
+                <div>
+                    <label for="apache-host"> Hostname:
+                        <input class="w3-input w3-section w3-border" type="text" name="apache-host" id="apache-host">
+                    </label>
+                </div>
+
+                <div>
+                    <label for="apache-port"> Port:
+                        <input class="w3-input w3-section w3-border" type="text" name="apache-port" id="apache-port">
+                    </label>
+                </div>
+
+                <div>
+                    <label for="apache-error-log-dir"> Error log directory:
+                        <input class="w3-input w3-section w3-border" type="text" name="apache-error-log-dir"
+                            id="apache-error-log-dir">
+                    </label>
+                </div>
+
+                <div>
+                    <label for="apache-custom-log-dir"> Error log directory:
+                        <input class="w3-input w3-section w3-border" type="apache-text" name="apache-custom-log-dir"
+                            id="apache-custom-log-dir">
+                    </label>
+                </div>
+
             </div>
 
-            <div>
-                <label for="apache-port"> Port:
-                    <input class="w3-input w3-section w3-border" type="text" name="apache-port" id="apache-port">
-                </label>
+            <div id="nginxDiv">
+
+                <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16"> Nginx</h3>
+                <div>
+                    <label for="nginx-host"> Hostname:
+                        <input class="w3-input w3-section w3-border" type="text" name="nginx-host" id="nginx-host">
+                    </label>
+                </div>
+
+                <div>
+                    <label for="nginx-port"> Port:
+                        <input class="w3-input w3-section w3-border" type="text" name="nginx-port" id="nginx-port">
+                    </label>
+                </div>
+
+                <div>
+                    <label for="nginx-error-log-dir"> Error log directory:
+                        <input class="w3-input w3-section w3-border" type="text" name="nginx-error-log-dir"
+                            id="nginx-error-log-dir">
+                    </label>
+                </div>
+
+                <div>
+                    <label for="nginx-custom-log-dir"> Error log directory:
+                        <input class="w3-input w3-section w3-border" type="text" name="nginx-custom-log-dir"
+                            id="nginx-custom-log-dir">
+                    </label>
+                </div>
+
             </div>
-
-            <div>
-                <label for="apache-error-log-dir"> Error log directory:
-                    <input class="w3-input w3-section w3-border" type="text" name="apache-error-log-dir"
-                           id="apache-error-log-dir">
-                </label>
-            </div>
-
-            <div>
-                <label for="apache-custom-log-dir"> Error log directory:
-                    <input class="w3-input w3-section w3-border" type="apache-text" name="apache-custom-log-dir"
-                           id="apache-custom-log-dir">
-                </label>
-            </div>
-
-        </div>
-
-        <div class="tab w3-container w3-padding-32">
-            <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16"> Nginx</h3>
-            <div>
-                <label for="nginx-host"> Hostname:
-                    <input class="w3-input w3-section w3-border" type="text" name="nginx-host" id="nginx-host">
-                </label>
-            </div>
-
-            <div>
-                <label for="nginx-port"> Port:
-                    <input class="w3-input w3-section w3-border" type="text" name="nginx-port" id="nginx-port">
-                </label>
-            </div>
-
-            <div>
-                <label for="nginx-error-log-dir"> Error log directory:
-                    <input class="w3-input w3-section w3-border" type="text" name="nginx-error-log-dir"
-                           id="nginx-error-log-dir">
-                </label>
-            </div>
-
-            <div>
-                <label for="nginx-custom-log-dir"> Error log directory:
-                    <input class="w3-input w3-section w3-border" type="text" name="nginx-custom-log-dir"
-                           id="nginx-custom-log-dir">
-                </label>
-            </div>
-
         </div>
 
         <div class="tab w3-container w3-padding-32">
@@ -138,22 +142,24 @@
                     <option value="configuration-file">Configuration File</option>
                 </select>
             </label>
-            <div>
-                <label for="mysql-user" id="mysql-user-label"> MySQL User:
-                    <input class="w3-input w3-section w3-border" type="text" name="mysql-user" id="mysql-user">
-                </label>
+            <div id="fieldsDiv">
+                <div>
+                    <label for="mysql-user" id="mysql-user-label"> MySQL User:
+                        <input class="w3-input w3-section w3-border" type="text" name="mysql-user" id="mysql-user">
+                    </label>
+                </div>
+                <div>
+                    <label for="mysql-password" id="mysql-password-label"> MySQL Password:
+                        <input class="w3-input w3-section w3-border" type="text" name="mysql-password" id="mysql-password">
+                    </label>
+                </div>
+                <div>
+                    <label for="mysql-root" id="mysql-root-label"> MySQL Root Password:
+                        <input class="w3-input w3-section w3-border" type="text" name="mysql-root" id="mysql-root">
+                    </label>
+                </div>
             </div>
-            <div>
-                <label for="mysql-password" id="mysql-password-label"> MySQL Password:
-                    <input class="w3-input w3-section w3-border" type="text" name="mysql-password" id="mysql-password">
-                </label>
-            </div>
-            <div>
-                <label for="mysql-root" id="mysql-root-label"> MySQL Root Password:
-                    <input class="w3-input w3-section w3-border" type="text" name="mysql-root" id="mysql-root">
-                </label>
-            </div>
-            <div>
+            <div id="fileDiv">
                 <label for="env-file" id="env-file-label"> Configuration file:
                     <input class="w3-input w3-section w3-border" type="file" name="env-file" id="env-file">
                 </label>
