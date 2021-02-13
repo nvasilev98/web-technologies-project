@@ -1,13 +1,15 @@
 version: "3.2"
 services:
-  php:
+  php1:
     build: './php/'
     volumes:
       - ./src/:/var/www/html/
-  apache:
+  php2:
+    build: './php/'
+    volumes:
+      - ./src/:/var/www/html/
+  web:
     build: './apache/'
-    depends_on:
-      - php
     ports:
       - "8080:80"
     volumes:
