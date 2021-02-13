@@ -4,9 +4,8 @@ $phpDockerfile =
     "FROM php:{{php-version}}-fpm-alpine3.7
      RUN docker-php-ext-install mysqli";
 
-function generatePhpDockerfile()
+function generatePhpDockerfile($version)
 {
-    $version = $_POST["php-version"];
     global $phpDockerfile;
     return str_replace("{{php-version}}", $version, $phpDockerfile);
 }
@@ -15,6 +14,8 @@ $apacheConf =
     "LoadModule deflate_module /usr/local/apache2/modules/mod_deflate.so
 LoadModule proxy_module /usr/local/apache2/modules/mod_proxy.so
 LoadModule proxy_fcgi_module /usr/local/apache2/modules/mod_proxy_fcgi.so
+
+LISTEN {{port}}
 
 ServerName {{server-name}}
 
@@ -29,17 +30,12 @@ ServerName {{server-name}}
         Require all granted
     </Directory>
 
-    # Send apache logs to stdout and stderr
     CustomLog {{custom-log}} common
     ErrorLog {{error-log}}
 </VirtualHost>";
 
-function generateApacheConfFile() {
+function generateApacheConfFile($host, $port, $errorLog, $customLog) {
     global $apacheConf;
-    $host = $_POST["host"];
-    $port = $_POST["port"];
-    $customLog = $_POST["custom-log-dir"];
-    // TODO: check if it's valid dir
     if (isBlank($customLog)) {
         // stdout
         $customLog = "/proc/self/fd/1";
@@ -49,7 +45,6 @@ function generateApacheConfFile() {
             return "";
         }
     }
-    $errorLog = $_POST["error-log-dir"];
     if (isBlank($errorLog)) {
         // stderr
         $errorLog = "/proc/self/fd/2";
@@ -80,17 +75,59 @@ COPY demo.apache.conf /usr/local/apache2/conf/demo.apache.conf
 RUN echo \"Include /usr/local/apache2/conf/demo.apache.conf\" \
     >> /usr/local/apache2/conf/httpd.conf";
 
-function generateApacheDockerfile() {
-    $apacheVersion = $_POST["apache-version"];
-    $errorLogDir = $_POST["error-log-dir"];
-    $customLogDir = $_POST["custom-log-dir"];
-    $errorLogDir = getDirectory($errorLogDir);
-    $customLogDir = getDirectory($customLogDir);
+function generateApacheDockerfile($version, $errorLog, $customLog) {
+    $errorLogDir = getDirectory($errorLog);
+    $customLogDir = getDirectory($customLog);
 
     global $apacheDockerfile;
-    $content = str_replace("{{apache-version}}", $apacheVersion, $apacheDockerfile);
+    $content = str_replace("{{apache-version}}", $version, $apacheDockerfile);
     $content = str_replace("{{error-log-dir}}", $errorLogDir, $content);
     $content = str_replace("{{custom-log-dir}}", $customLogDir, $content);
+
+    return $content;
+}
+
+$nginxDockerFile =
+"FROM nginx:{{version}}
+
+RUN [\"/bin/bash\", \"-c\", \"[ ! -d '{{error-log}}' ] && mkdir -p /{{error-log}}\"]";
+
+function generateNginxDockerfile($nginxVersion, $errorLog) {
+    global $nginxDockerFile;
+
+    $errorLog = getDirectory($errorLog);
+
+    $content = str_replace('{{version}}', $nginxVersion, $nginxDockerFile);
+    $content = str_replace('{{error-log}}', $errorLog, $content);
+
+    return $content;
+}
+
+$nginxConf =
+"server {
+    index index.php index.html;
+    server_name {{hostname}};
+    error_log  {{error-log}};
+    access_log {{access-log}};
+    root /var/www/html/;
+
+    location ~ \.php$ {
+        try_files \$uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass php:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        fastcgi_param PATH_INFO \$fastcgi_path_info;
+    }
+}";
+
+function generateNginxConf($hostname, $errorLog, $accessLog) {
+    global $nginxConf;
+
+    $content = str_replace('{{hostname}}', $hostname, $nginxConf);
+    $content = str_replace("{{error-log}}", $errorLog, $content);
+    $content = str_replace("{{access-log}}", $accessLog, $content);
 
     return $content;
 }
@@ -110,23 +147,16 @@ function getDirectory($str) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $phpDockerfile = generatePhpDockerfile() . "\n";
-    $apacheConf = generateApacheConfFile() . "\n";
-    $apacheDockerfile = generateApacheDockerfile() . "\n";
 
-//    $zip = new ZipArchive();
-//    $zip -> open("gosho.zip", ZipArchive::CREATE);
-//
-//    $zip -> addFromString("/apache/demo.apache.conf", $apacheConf);
-//    $zip -> addFromString("/apache/Dockerfile", $apacheDockerfile);
-//    $zip -> addFromString("/php/Dockerfile", $phpDockerfile);
-//
-//    $zip -> close();
+    $hostname = $_POST["host"];
+    $errorLog = $_POST["error-log-dir"];
+    $customLog = $_POST["custom-log-dir"];
 
-//    header("Content-Type: application/zip");
-//    header("Content-Disposition: attachment; filename=test");
-//    header("Content-Length: " . filesize($zipName));
+    $nginxConf = generateNginxConf($hostname, $errorLog, $customLog);
 
-    //readfile($zipName);
+    header("Content-Type: application/text");
+    header("Content-Disposition: attachment; filename=nginx.conf");
+
+    echo $nginxConf;
 }
 ?>
