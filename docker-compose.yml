@@ -4,10 +4,8 @@ services:
     build: './php/'
     volumes:
       - ./src/:/var/www/html/
-  php2:
-    build: './php/'
-    volumes:
-      - ./src/:/var/www/html/
+    depends_on:
+      - db
   web:
     build: './apache/'
     ports:

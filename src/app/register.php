@@ -1,5 +1,5 @@
 <?php
-require_once "config.php";
+include_once "database/DBConnector.php";
 
 $username = $password = $confirm_password = "";
 $username_err = $password_err = $confirm_password_err = "";
@@ -12,9 +12,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $sql = "SELECT id FROM users WHERE username = :username";
 
-        if ($stmt = $pdo->prepare($sql)) {
+        if ($stmt = DBConnector::getInstance()::getConnection()->prepare($sql)) {
 
-            $stmt->bindParam(":username", $param_username, PDO::PARAM_STR);
+            $stmt->bindParam(":username", $param_username);
 
 
             $param_username = trim($_POST["username"]);
@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $sql = "INSERT INTO users (username, password) VALUES (:username, :password)";
 
-        if ($stmt = $pdo->prepare($sql)) {
+        if ($stmt = DBConnector::getInstance()::getConnection()->prepare($sql)) {
             $stmt->bindParam(":username", $param_username, PDO::PARAM_STR);
             $stmt->bindParam(":password", $param_password, PDO::PARAM_STR);
 

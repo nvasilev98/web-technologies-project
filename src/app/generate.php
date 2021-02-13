@@ -1,16 +1,16 @@
 <?php
 
-$phpDockerfile =
-    "FROM php:{{php-version}}-fpm-alpine3.7
-     RUN docker-php-ext-install mysqli";
+const phpDockerfile =
+    "FROM php:{{php-version}}-fpm
+RUN docker-php-ext-install mysqli
+RUN docker-php-ext-install pdo pdo_mysql";
 
 function generatePhpDockerfile($version)
 {
-    global $phpDockerfile;
-    return str_replace("{{php-version}}", $version, $phpDockerfile);
+    return str_replace("{{php-version}}", $version, phpDockerfile);
 }
 
-$apacheConf =
+const apacheConf =
     "LoadModule deflate_module /usr/local/apache2/modules/mod_deflate.so
 LoadModule proxy_module /usr/local/apache2/modules/mod_proxy.so
 LoadModule proxy_fcgi_module /usr/local/apache2/modules/mod_proxy_fcgi.so
@@ -21,7 +21,7 @@ ServerName {{server-name}}
 
 <VirtualHost *:{{port}}>
     ServerName {{server-name}}
-    ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://php:9000/var/www/html/$1
+    ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://php1:9000/var/www/html/$1
     DocumentRoot /var/www/html/
     <Directory /var/www/html/>
         DirectoryIndex index.php
@@ -35,26 +35,16 @@ ServerName {{server-name}}
 </VirtualHost>";
 
 function generateApacheConfFile($host, $port, $errorLog, $customLog) {
-    global $apacheConf;
     if (isBlank($customLog)) {
         // stdout
         $customLog = "/proc/self/fd/1";
-    } else {
-        $directory = getDirectory($customLog);
-        if (!isDir($directory)) {
-            return "";
-        }
     }
     if (isBlank($errorLog)) {
         // stderr
         $errorLog = "/proc/self/fd/2";
-    } else {
-        $directory = getDirectory($errorLog);
-        if (!isDir($directory)) {
-            return "";
-        }
     }
-    $content = str_replace("{{server-name}}", $host, $apacheConf);
+
+    $content = str_replace("{{server-name}}", $host, apacheConf);
     $content = str_replace("{{port}}", $port, $content);
     $content = str_replace("{{custom-log}}", $customLog, $content);
     $content = str_replace("{{error-log}}", $errorLog, $content);
@@ -62,7 +52,7 @@ function generateApacheConfFile($host, $port, $errorLog, $customLog) {
     return $content;
 }
 
-$apacheDockerfile =
+const apacheDockerfile =
     "FROM httpd:{{apache-version}}-alpine
 RUN apk update; \
     apk upgrade;
@@ -70,7 +60,6 @@ RUN apk update; \
 RUN [\"/bin/bash\",\"-c\", \"[ ! -d '{{error-log-dir}}' ] && mkdir -p {{error-log-dir}}\"]
 RUN [\"/bin/bash\",\"-c\", \"[ ! -d '{{custom-log-dir}}' ] && mkdir -p {{custom-log-dir}}\"]
 
-# Copy apache vhost file to proxy php requests to php-fpm container
 COPY demo.apache.conf /usr/local/apache2/conf/demo.apache.conf
 RUN echo \"Include /usr/local/apache2/conf/demo.apache.conf\" \
     >> /usr/local/apache2/conf/httpd.conf";
@@ -79,37 +68,40 @@ function generateApacheDockerfile($version, $errorLog, $customLog) {
     $errorLogDir = getDirectory($errorLog);
     $customLogDir = getDirectory($customLog);
 
-    global $apacheDockerfile;
-    $content = str_replace("{{apache-version}}", $version, $apacheDockerfile);
+    $content = str_replace("{{apache-version}}", $version, apacheDockerfile);
     $content = str_replace("{{error-log-dir}}", $errorLogDir, $content);
     $content = str_replace("{{custom-log-dir}}", $customLogDir, $content);
 
     return $content;
 }
 
-$nginxDockerFile =
+const nginxDockerFile =
 "FROM nginx:{{version}}
 
-RUN [\"/bin/bash\", \"-c\", \"[ ! -d '{{error-log}}' ] && mkdir -p /{{error-log}}\"]";
+RUN [\"/bin/bash\", \"-c\", \"[ ! -d '{{error-log}}' ] && mkdir -p /{{error-log}}\"]
+RUN [\"/bin/bash\", \"-c\", \"[ ! -d '{{custom-log}}' ] && mkdir -p /{{custom-log}}\"]";
 
-function generateNginxDockerfile($nginxVersion, $errorLog) {
-    global $nginxDockerFile;
-
+function generateNginxDockerfile($nginxVersion, $errorLog, $customLog) {
     $errorLog = getDirectory($errorLog);
 
-    $content = str_replace('{{version}}', $nginxVersion, $nginxDockerFile);
+    $content = str_replace('{{version}}', $nginxVersion, nginxDockerFile);
     $content = str_replace('{{error-log}}', $errorLog, $content);
+    $content = str_replace('{{custom-log}}', $customLog, $content);
 
     return $content;
 }
 
-$nginxConf =
-"server {
+const nginxConf =
+"
+{{load-balancer}}
+server {
     index index.php index.html;
     server_name {{hostname}};
     error_log  {{error-log}};
     access_log {{access-log}};
     root /var/www/html/;
+    
+    {{lb-pass-pass}}
 
     location ~ \.php$ {
         try_files \$uri =404;
@@ -122,12 +114,41 @@ $nginxConf =
     }
 }";
 
-function generateNginxConf($hostname, $errorLog, $accessLog) {
-    global $nginxConf;
+const nginxLb =
+"upstream php {
+    {{servers}}
+}";
 
-    $content = str_replace('{{hostname}}', $hostname, $nginxConf);
+const proxyPassLocation =
+"   location / {
+        proxy_pass http://php;
+    }";
+
+function generateNginxConf($hostname, $errorLog, $accessLog, $useLb, $serverCount) {
+    if (isBlank($errorLog)) {
+        $errorLog = "/var/log/nginx/error.log";
+    }
+    if (isBlank($accessLog)) {
+        $accessLog = "/var/log/nginx/access.log";
+    }
+
+    $content = str_replace('{{hostname}}', $hostname, nginxConf);
     $content = str_replace("{{error-log}}", $errorLog, $content);
     $content = str_replace("{{access-log}}", $accessLog, $content);
+
+    if ($useLb === TRUE) {
+        $servers = "";
+        for ($i = 1; $i <= $serverCount; $i++) {
+            $servers .= "server webtechnologiesproject_php" . $i . "_1:9000;";
+        }
+
+        $upstream = str_replace('{{servers}}', $servers, nginxLb);
+        $content = str_replace('{{load-balancer}}', $upstream, $content);
+        $content = str_replace('{{lb-pass-pass}}', proxyPassLocation, $content);
+    } else {
+        $content = str_replace('{{load-balancer}}', '', $content);
+        $content = str_replace('{{lb-pass-pass}}', '', $content);
+    }
 
     return $content;
 }
@@ -150,9 +171,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $hostname = $_POST["host"];
     $errorLog = $_POST["error-log-dir"];
+    $port = $_POST["port"];
     $customLog = $_POST["custom-log-dir"];
 
-    $nginxConf = generateNginxConf($hostname, $errorLog, $customLog);
+    $nginxConf = generateApacheConfFile($hostname, $port, $errorLog, $customLog);
 
     header("Content-Type: application/text");
     header("Content-Disposition: attachment; filename=nginx.conf");

@@ -199,5 +199,5 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     </div>
 </body>
 </html>
-<script src="js/main.js"></script>
+<script src="../js/main.js"></script>
 <script></script>

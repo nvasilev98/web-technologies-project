@@ -178,5 +178,5 @@
         <span class="step"></span>
         <span class="step"></span>
     </div>
-<script src="js/main.js"></script>
+<script src="../js/main.js"></script>
 <script></script>
