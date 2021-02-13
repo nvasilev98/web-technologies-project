@@ -79,3 +79,9 @@ function configurationTypeFunc() {
         document.getElementById("env-file-label").style.display = "none";
     }
 }
+
+function edit() {
+var path = window.location.pathname;
+var newPath = path.substring(0, path.lastIndexOf('/') + 1) + "update.php";
+window.location.href = newPath;
+}
