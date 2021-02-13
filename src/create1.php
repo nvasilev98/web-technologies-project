@@ -30,9 +30,25 @@
                 </label>
             </div>
             <div>
+            <select name="server" id="server">
+                <option value="apache">Apache</option>
+                <option value="nginx">Nginx</option>
+            </select>
+            </div>
+            <div>
                 <label for="apache-version">
                     Apache Version:
                     <select class="w3-input w3-section w3-border" name="apache-version" id="apache-version">
+                        <option value="2.4">2.4</option>
+                        <option value="2.2">2.2</option>
+                        <option value="2">2</option>
+                    </select>
+                </label>
+            </div>
+            <div>
+                <label for="nginx-version">
+                    Nginx Version:
+                    <select class="w3-input w3-section w3-border" name="nginx-version" id="nginx-version">
                         <option value="2.4">2.4</option>
                         <option value="2.2">2.2</option>
                         <option value="2">2</option>
@@ -55,22 +71,45 @@
             <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16"> Apache</h3>
             <div>
                 <label for="host"> Hostname:
-                    <input class="w3-input w3-section w3-border" type="text" name="host" id="host">
+                    <input class="w3-input w3-section w3-border" type="text" name="apache-host" id="apache-host">
                 </label>
             </div>
             <div>
                 <label for="port"> Port:
-                    <input class="w3-input w3-section w3-border" type="text" name="port" id="port">
+                    <input class="w3-input w3-section w3-border" type="text" name="apache-port" id="apache-port">
                 </label>
             </div>
             <div>
                 <label for="error-log-dir"> Error log directory:
-                    <input class="w3-input w3-section w3-border" type="text" name="error-log-dir" id="error-log-dir">
+                    <input class="w3-input w3-section w3-border" type="text" name="apache-error-log-dir" id="apache-error-log-dir">
                 </label>
             </div>
             <div>
                 <label for="custom-log-dir"> Error log directory:
-                    <input class="w3-input w3-section w3-border" type="text" name="custom-log-dir" id="custom-log-dir">
+                    <input class="w3-input w3-section w3-border" type="text" name="apache-custom-log-dir" id="apache-custom-log-dir">
+                </label>
+            </div>
+        </div>
+        <div class="tab w3-container w3-padding-32">
+            <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16"> Nginx</h3>
+            <div>
+                <label for="host"> Hostname:
+                    <input class="w3-input w3-section w3-border" type="text" name="nginx-host" id="nginx-host">
+                </label>
+            </div>
+            <div>
+                <label for="port"> Port:
+                    <input class="w3-input w3-section w3-border" type="text" name="nginx-port" id="nginx-port">
+                </label>
+            </div>
+            <div>
+                <label for="error-log-dir"> Error log directory:
+                    <input class="w3-input w3-section w3-border" type="text" name="nginx-error-log-dir" id="nginx-error-log-dir">
+                </label>
+            </div>
+            <div>
+                <label for="custom-log-dir"> Error log directory:
+                    <input class="w3-input w3-section w3-border" type="text" name="nginx-custom-log-dir" id="nginx-custom-log-dir">
                 </label>
             </div>
         </div>
