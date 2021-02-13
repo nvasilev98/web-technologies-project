@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+    header("location: login.php");
+    exit;
+}
+?>
+
 <html>
     <title>AEN Project</title>
     <meta charset="UTF-8">
@@ -59,6 +68,7 @@
                     <a href="create.php" class="w3-bar-item w3-button">Create</a>
                     <a href="update.php" class="w3-bar-item w3-button">Edit</a>
                     <a href="history.php" class="w3-bar-item w3-button">History</a>
+                    <a href="logout.php" class="w3-bar-item w3-button">Sign Out</a>
                 </div>
             </div>
         </div>
