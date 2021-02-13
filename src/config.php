@@ -28,7 +28,8 @@ try {
             id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
             file VARCHAR(50) NOT NULL,
             created_by VARCHAR(50) NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            content JSON
             );";
 
   $pdo->exec($filesdb);
