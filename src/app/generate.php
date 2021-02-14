@@ -21,11 +21,9 @@ const apacheConf =
 LoadModule proxy_module /usr/local/apache2/modules/mod_proxy.so
 LoadModule proxy_fcgi_module /usr/local/apache2/modules/mod_proxy_fcgi.so
 
-LISTEN {{port}}
-
 ServerName {{server-name}}
 
-<VirtualHost *:{{port}}>
+<VirtualHost *:80>
     ServerName {{server-name}}
     ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://php1:9000/var/www/html/$1
     DocumentRoot /var/www/html/
@@ -40,7 +38,7 @@ ServerName {{server-name}}
     ErrorLog {{error-log}}
 </VirtualHost>";
 
-function generateApacheConfFile($host, $port, $errorLog, $customLog)
+function generateApacheConfFile($host, $errorLog, $customLog)
 {
     if (isBlank($customLog)) {
         // stdout
@@ -52,7 +50,6 @@ function generateApacheConfFile($host, $port, $errorLog, $customLog)
     }
 
     $content = str_replace("{{server-name}}", $host, apacheConf);
-    $content = str_replace("{{port}}", $port, $content);
     $content = str_replace("{{custom-log}}", $customLog, $content);
     $content = str_replace("{{error-log}}", $errorLog, $content);
 
@@ -67,8 +64,8 @@ RUN apk update; \
 RUN [\"/bin/bash\",\"-c\", \"[ ! -d '{{error-log-dir}}' ] && mkdir -p {{error-log-dir}}\"]
 RUN [\"/bin/bash\",\"-c\", \"[ ! -d '{{custom-log-dir}}' ] && mkdir -p {{custom-log-dir}}\"]
 
-COPY demo.apache.conf /usr/local/apache2/conf/demo.apache.conf
-RUN echo \"Include /usr/local/apache2/conf/demo.apache.conf\" \
+COPY project.apache.conf /usr/local/apache2/conf/project.apache.conf
+RUN echo \"Include /usr/local/apache2/conf/project.apache.conf\" \
     >> /usr/local/apache2/conf/httpd.conf";
 
 function generateApacheDockerfile($version, $errorLog, $customLog)
@@ -181,39 +178,70 @@ function getDirectory($str)
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $hostname = $_POST["apache-host"];
-    $errorLog = $_POST["apache-error-log-dir"];
-    $port = $_POST["apache-port"];
-    $customLog = $_POST["apache-custom-log-dir"];
 
-    $apacheConf = generateApacheConfFile($hostname, $port, $errorLog, $customLog);
+    $phpVersion = $_POST['php-version'];
+    $phpDockerfile = generatePhpDockerfile($phpVersion);
+
+    $server = $_POST['server'];
+    if ($server === 'apache') {
+        $hostname = $_POST['apache-host'];
+        $port = $_POST['apache-port'];
+        $errorLog = $_POST['apache-error-log-dir'];
+        $customLog = $_POST['apache-custom-log-dir'];
+        $apacheVersion = $_POST['apache-version'];
+        $confFile = generateApacheConfFile($hostname, $errorLog, $customLog);
+        $serverDockerFile = generateApacheDockerfile($apacheVersion, $customLog, $errorLog);
+    } else {
+        $hostname = $_POST['nginx-host'];
+        $port = $_POST['nginx-port'];
+        $errorLog = $_POST['nginx-error-log-dir'];
+        $customLog = $_POST['nginx-custom-log-dir'];
+        $nginxVersion = $_POST['nginx-version'];
+        $useLoadBalancer = $_POST['use-load-balancer'];
+        if ($useLoadBalancer === FALSE) {
+            $serverCount = 1;
+        } else {
+            $serverCount = $_POST['server-count'];
+        }
+        $confFile = generateNginxConf($hostname, $errorLog, $customLog, $useLoadBalancer, $serverCount);
+        $serverDockerFile = generateNginxDockerfile($nginxVersion, $errorLog, $customLog);
+    }
 
     $filename = $_POST["name"];
     $username = $_SESSION["username"];
     $json = json_encode($_POST);
 
     if (createFile($filename, $username, $json) === TRUE) {
-        zipFilesAndDownload($apacheConf);
+        zipFilesAndDownload($filename, $phpDockerfile, $server, $serverDockerFile, $confFile);
     }
 }
 
-function zipFilesAndDownload($apacheConf)
+function zipFilesAndDownload($filename, $phpDockerFile, $server, $serverDockerfile, $serverConf)
 {
     $zip = new ZipArchive();
 
-    if ($zip->open('test.zip', ZipArchive::CREATE) !== TRUE) {
+    if ($zip->open($filename, ZipArchive::CREATE) !== TRUE) {
         exit("cannot open!!");
     }
 
-    $zip->addFromString("/apache/demo.apache.conf", $apacheConf);
+    $zip->addFromString('php/Dockerfile', $phpDockerFile);
+    if ($server === 'apache') {
+        $zip->addFromString('apache/Dockerfile', $serverDockerfile);
+        $zip->addFromString('apache/project.apache.conf', $serverConf);
+    } else {
+        $zip->addFromString('nginx/Dockerfile', $serverDockerfile);
+        $zip->addFromString('nginx/nginx.conf', $serverConf);
+    }
     $zip->close();
 
     header("Content-type: application/zip");
-    header("Content-Disposition: attachment; filename=test.zip");
-    header("Content-length: " . filesize("test.zip"));
+    header("Content-Disposition: attachment; filename=" . $filename);
+    header("Content-length: " . filesize($filename));
     header("Pragma: no-cache");
     header("Expires: 0");
-    readfile("test.zip");
+    readfile($filename);
+
+    unlink($filename);
 }
 
 ?>

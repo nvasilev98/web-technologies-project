@@ -2,7 +2,8 @@
 
 include_once 'DBConnector.php';
 
-function createFile($fileName, $user, $content) {
+function createFile($fileName, $user, $content): bool
+{
     $sql = 'INSERT INTO files(file, created_by, content) VALUES (:file, :created_by, :content)';
 
     if ($stmt = DBConnector::getInstance()::getConnection() -> prepare($sql)) {
