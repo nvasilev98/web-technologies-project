@@ -1,7 +1,10 @@
 <?php
 include 'header.php';
-include 'session.php';
-
+session_start();
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+    header("location: login.php");
+    exit;
+}
 require_once "database/DBConnector.php";
 $username = $_SESSION["username"];
 $stmt = DBConnector::getInstance()::getConnection()->prepare("SELECT * FROM files where created_by = :username");

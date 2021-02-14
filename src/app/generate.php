@@ -1,5 +1,11 @@
 <?php
 
+include_once 'database/DbExecutor.php';
+session_start();
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+    header("location: login.php");
+    exit;
+}
 const phpDockerfile =
 "FROM php:{{php-version}}-fpm
 RUN docker-php-ext-install mysqli
@@ -175,17 +181,39 @@ function getDirectory($str)
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $hostname = $_POST["apache-host"];
+    $errorLog = $_POST["apache-error-log-dir"];
+    $port = $_POST["apache-port"];
+    $customLog = $_POST["apache-custom-log-dir"];
 
-    $hostname = $_POST["host"];
-    $errorLog = $_POST["error-log-dir"];
-    $port = $_POST["port"];
-    $customLog = $_POST["custom-log-dir"];
+    $apacheConf = generateApacheConfFile($hostname, $port, $errorLog, $customLog);
 
-    $nginxConf = generateApacheConfFile($hostname, $port, $errorLog, $customLog);
+    $filename = $_POST["name"];
+    $username = $_SESSION["username"];
+    $json = json_encode($_POST);
 
-    header("Content-Type: application/text");
-    header("Content-Disposition: attachment; filename=nginx.conf");
-
-    echo $nginxConf;
+    if (createFile($filename, $username, $json) === TRUE) {
+        zipFilesAndDownload($apacheConf);
+    }
 }
+
+function zipFilesAndDownload($apacheConf)
+{
+    $zip = new ZipArchive();
+
+    if ($zip->open('test.zip', ZipArchive::CREATE) !== TRUE) {
+        exit("cannot open!!");
+    }
+
+    $zip->addFromString("/apache/demo.apache.conf", $apacheConf);
+    $zip->close();
+
+    header("Content-type: application/zip");
+    header("Content-Disposition: attachment; filename=test.zip");
+    header("Content-length: " . filesize("test.zip"));
+    header("Pragma: no-cache");
+    header("Expires: 0");
+    readfile("test.zip");
+}
+
 ?>
