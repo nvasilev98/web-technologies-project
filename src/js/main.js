@@ -38,6 +38,7 @@ function nextPrev(n) {
 }
 
 function validateForm() {
+    changeServer();
     let valid = true;
     let requiredFields = document.getElementsByClassName("tab");
     let inputs = requiredFields[currentTab].getElementsByTagName("input");
@@ -127,6 +128,7 @@ function updateFields() {
             document.getElementById(key).value = jsonContent[key];
         }
     }
+    changeServer();
     window.localStorage.removeItem('content');
 }
 
