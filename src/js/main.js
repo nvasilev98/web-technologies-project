@@ -1,6 +1,7 @@
 var currentTab = 0;
 showTab(currentTab);
 configurationTypeFunc();
+changeServer();
 
 function showTab(n) {
     var x = document.getElementsByClassName("tab");
@@ -56,27 +57,43 @@ function fixStepIndicator(n) {
 
 function configurationTypeFunc() {
     if (document.getElementById("configuration-type").value == "configuration-file") {
-        document.getElementById("mysql-user").style.display = "none";
-        document.getElementById("mysql-password").style.display = "none";
-        document.getElementById("mysql-root").style.display = "none";
-
-        document.getElementById("mysql-user-label").style.display = "none";
-        document.getElementById("mysql-password-label").style.display = "none";
-        document.getElementById("mysql-root-label").style.display = "none";
-
-        document.getElementById("env-file").style.display = "block";
-        document.getElementById("env-file-label").style.display = "block";
+        allDescendantsDeactivate(document.getElementById("fieldsDiv"));
+        allDescendantsActivate(document.getElementById("fileDiv"));
     } else {
-        document.getElementById("mysql-user").style.display = "block";
-        document.getElementById("mysql-password").style.display = "block";
-        document.getElementById("mysql-root").style.display = "block";
+        allDescendantsDeactivate(document.getElementById("fileDiv"));
+        allDescendantsActivate(document.getElementById("fieldsDiv"));
+    }
+}
 
-        document.getElementById("mysql-user-label").style.display = "block";
-        document.getElementById("mysql-password-label").style.display = "block";
-        document.getElementById("mysql-root-label").style.display = "block";
+function changeServer() {
+    console.log("ASDdsasad");
+    if (document.getElementById("server").value == "apache") {
+        allDescendantsDeactivate(document.getElementById("nginxDiv"));
+        allDescendantsActivate(document.getElementById("apacheDiv"));
+    } else {
+        allDescendantsDeactivate(document.getElementById("apacheDiv"));
+        allDescendantsActivate(document.getElementById("nginxDiv"));
 
-        document.getElementById("env-file").style.display = "none";
-        document.getElementById("env-file-label").style.display = "none";
+    }
+}
+
+function allDescendantsActivate (node) {
+    for (var i = 0; i < node.childNodes.length; i++) {
+      var child = node.childNodes[i];
+      allDescendantsActivate(child);
+      if(child.style != undefined){
+      child.style.display = "block";
+      }
+    }
+}
+
+function allDescendantsDeactivate (node) {
+    for (var i = 0; i < node.childNodes.length; i++) {
+      var child = node.childNodes[i];
+      allDescendantsDeactivate(child);
+      if(child.style != undefined){
+      child.style.display = "none"
+      }
     }
 }
 
