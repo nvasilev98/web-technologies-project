@@ -190,7 +190,8 @@ volumes:
 const nginxVolume =
 "- ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf";
 
-function generateDockerCompose($server, $port, $mysqlVersion, $numberOfInstances) {
+function generateDockerCompose($server, $port, $mysqlVersion, $numberOfInstances)
+{
     $content = str_replace('{{port}}', $port, dockerCompose);
     $content = str_replace('{{server}}', $server, $content);
     $content = str_replace('{{mysql-version}}', $mysqlVersion, $content);
@@ -215,12 +216,27 @@ const phpServices =
     depends_on:
       - db";
 
-function generatePhpServices($numberOfInstances) {
+function generatePhpServices($numberOfInstances)
+{
     $content = '';
     for ($i = 1; $i <= $numberOfInstances; $i++) {
         $service = str_replace('{{number}}', $i, phpServices);
-        $content .= $service .'\n';
+        $content .= $service;
     }
+    return $content;
+}
+
+const envFile =
+"MYSQL_USER={{user}}
+MYSQL_PASSWORD={{password}}
+MYSQL_ROOT_PASSWORD={{root-password}}";
+
+function generateEnvFile($user, $password, $rootPass)
+{
+    $content = str_replace('{{user}}', $user, envFile);
+    $content = str_replace('{{password}}', $password, $content);
+    $content = str_replace('{{root-password}}', $rootPass, $content);
+
     return $content;
 }
 
@@ -272,6 +288,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $serverDockerFile = generateNginxDockerfile($nginxVersion, $errorLog, $customLog);
     }
 
+    $envFile = generateEnvFile($_POST['mysql-user'], $_POST['mysql-password'], $_POST['mysql-root']);
+
     $mysqlVersion = $_POST['mysql-version'];
     $dockerCompose = generateDockerCompose($server, $port, $mysqlVersion, $serverCount);
 
@@ -280,11 +298,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $json = json_encode($_POST);
 
     if (createFile($filename, $username, $json) === TRUE) {
-        zipFilesAndDownload($filename, $phpDockerfile, $server, $serverDockerFile, $confFile, $dockerCompose);
+        zipFilesAndDownload($filename, $phpDockerfile, $server, $serverDockerFile, $confFile, $dockerCompose, $envFile);
     }
 }
 
-function zipFilesAndDownload($filename, $phpDockerFile, $server, $serverDockerfile, $serverConf, $dockerCompose)
+function zipFilesAndDownload($filename, $phpDockerFile, $server, $serverDockerfile, $serverConf, $dockerCompose, $envFile)
 {
     $zip = new ZipArchive();
 
@@ -302,6 +320,7 @@ function zipFilesAndDownload($filename, $phpDockerFile, $server, $serverDockerfi
         $zip->addFromString('nginx/nginx.conf', $serverConf);
     }
     $zip->addFromString('docker.compose.yml', $dockerCompose);
+    $zip->addFromString('.env', $envFile);
     $zip->close();
 
     header("Content-type: application/zip");
