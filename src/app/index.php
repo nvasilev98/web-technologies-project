@@ -23,9 +23,9 @@
             transform: translateX(-50%);
         }
         .logo {
-            width: 30%; 
+            width: 70%; 
             position: absolute;
-            top: 30%;
+            top: 150%;
             left: 50%;
             transform: translateY(-50%);
             transform: translateX(-50%);
@@ -35,9 +35,9 @@
 <body>
 <div class="page-header wrapper">
     <h1>Hello, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b>. Welcome to Docker Manager!</h1>
-</div>
-<div>
-    <img src="../images/docker-logo.png" alt="docker" class = "logo">
+    <div>
+        <img src="../images/docker-logo.png" alt="docker" class = "logo">
+    </div>
 </div>
 </body>
 </html>

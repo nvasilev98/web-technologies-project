@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="../css/main.css">
 <div class="w3-top">
     <div class="w3-bar w3-white w3-wide w3-padding w3-card">
-        <a href="#home" class="w3-bar-item w3-button"><b>ENA</b> Project</a>
+        <a href="index.php" class="w3-bar-item w3-button"><b>ENA</b> Project</a>
         <div class="w3-right w3-hide-small">
             <a href="create.php" class="w3-bar-item w3-button">Create</a>
             <a href="update.php" class="w3-bar-item w3-button">Edit</a>
