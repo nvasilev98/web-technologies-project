@@ -140,9 +140,21 @@
                 </div>
 
                 <div>
-                    <label for="nginx-custom-log-dir"> Custom log directory:
+                    <label for="nginx-custom-log-dir"> Access log directory:
                         <input class="w3-input w3-section w3-border" type="text" name="nginx-custom-log-dir"
                             id="nginx-custom-log-dir">
+                    </label>
+                </div>
+
+                <div>
+                    <label for="use-load-balancer"> Do you want to use Load Balancer ?
+                        <input type="checkbox" id="use-load-balancer">
+                    </label>
+                </div>
+
+                <div>
+                    <label for="server-count"> Number of instances:
+                        <input class="w3-input w3-section w3-border" type="text" name="server-count" id="server-count">
                     </label>
                 </div>
 

@@ -13,5 +13,6 @@ CREATE TABLE IF NOT EXISTS files (
     file VARCHAR(50) NOT NULL,
     created_by VARCHAR(50) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    content JSON
+    content JSON,
+    version INT DEFAULT 1
 );

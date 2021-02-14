@@ -8,8 +8,8 @@ function createFile($fileName, $user, $content): bool
 
     $version = 0;
     if ($stmt = DBConnector::getInstance()::getConnection() -> prepare($selectSql)) {
-        $stmt->bindParam(':file', $fileName);
-        $stmt->bindParam(':created_by', $user);
+        $stmt->bindParam(':filename', $fileName);
+        $stmt->bindParam(':username', $user);
 
         if ($stmt->execute()) {
             $version = $stmt->fetchColumn();

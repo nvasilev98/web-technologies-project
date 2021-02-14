@@ -307,8 +307,8 @@ function zipFilesAndDownload($filename, $phpDockerFile, $server, $serverDockerfi
     $zip = new ZipArchive();
 
     $filename .= '.zip';
-    if ($zip->open($filename, ZipArchive::CREATE) !== TRUE) {
-        exit("cannot open!!");
+    if (!$zip->open($filename, ZipArchive::CREATE|ZipArchive::OVERWRITE)) {
+        exit("cannot open file!!");
     }
 
     $zip->addFromString('php/Dockerfile', $phpDockerFile);
