@@ -53,6 +53,14 @@ function validateForm() {
             }
         }
     }
+
+    let errorSpans = requiredFields[currentTab].getElementsByClassName("error-msg");
+    for (let i = 0; i < errorSpans.length; i++) {
+        if (errorSpans[i].style.display !== 'none') {
+            valid = false;
+        }
+    }
+
     if (valid) {
         document.getElementsByClassName("step")[currentTab].className += " finish";
     }
