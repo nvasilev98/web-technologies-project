@@ -181,12 +181,6 @@
                     <input class="w3-input w3-section w3-border" type="file" name="env-file" id="env-file">
                 </label>
             </div>
-            <div>
-                <label for="sql-script-file"> SQL Script:
-                    <input class="w3-input w3-section w3-border" type="file" name="sql-script-file"
-                           id="sql-script-file">
-                </label>
-            </div>
         </div>
 </form>
 

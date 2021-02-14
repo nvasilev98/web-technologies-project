@@ -108,14 +108,21 @@ function allDescendantsDeactivate (node) {
 
 function edit(content) {
     var path = window.location.pathname;
+    window.localStorage.setItem('content', JSON.stringify(content));
     var newPath = path.substring(0, path.lastIndexOf('/') + 1) + "update.php";
     window.location.href = newPath;
-    updateFields(content);
-
 }
 
-function updateFields(json) {
-    for(key in json){
-        document.getElementById(key).value = json[key];
+function updateFields() {
+    var content = window.localStorage.getItem('content');
+    var jsonContent = JSON.parse(content);
+    for(key in jsonContent){
+        if (document.getElementById(key)){
+        document.getElementById(key).value = jsonContent[key];
+        }
+        else {
+            console.log(key);
+        }
     }
+    window.localStorage.removeItem('content');
 }
