@@ -20,7 +20,7 @@ class DBConnector
 
     private function __construct()
     {
-        self::$_pdo = new PDO("mysql:host=db;dbname=dockerproject;", "root", "admin");
+        self::$_pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";", DB_USER, DB_PASSWORD);
     }
 
     public static function getConnection(): PDO
