@@ -15,6 +15,7 @@
             transform: translateX(-50%);
         }
 </style>
+<body onload="updateFields()">
 <h2 id="created" class="createdText" display="none">Your files were successfully created.</h2>
 <form id="form" method="post" action="generate.php">
     <div class="w3-content w3-padding" style="max-width:1564px">
@@ -181,12 +182,6 @@
                     <input class="w3-input w3-section w3-border" type="file" name="env-file" id="env-file">
                 </label>
             </div>
-            <div>
-                <label for="sql-script-file"> SQL Script:
-                    <input class="w3-input w3-section w3-border" type="file" name="sql-script-file"
-                           id="sql-script-file">
-                </label>
-            </div>
         </div>
 </form>
 
@@ -207,5 +202,6 @@
     <span class="step"></span>
     <span class="step"></span>
 </div>
+</body>
 <script src="../js/main.js"></script>
 <script></script>
