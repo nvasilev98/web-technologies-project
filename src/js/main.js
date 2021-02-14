@@ -72,7 +72,6 @@ function configurationTypeFunc() {
 }
 
 function changeServer() {
-    console.log("ASDdsasad");
     if (document.getElementById("server").value == "apache") {
         allDescendantsDeactivate(document.getElementById("nginxDiv"));
         allDescendantsDeactivate(document.getElementById("nginx-version-div"));
@@ -108,8 +107,15 @@ function allDescendantsDeactivate (node) {
 }
 
 function edit(content) {
-alert(JSON.stringify(content));
-var path = window.location.pathname;
-var newPath = path.substring(0, path.lastIndexOf('/') + 1) + "update.php";
-window.location.href = newPath;
+    var path = window.location.pathname;
+    var newPath = path.substring(0, path.lastIndexOf('/') + 1) + "update.php";
+    window.location.href = newPath;
+    updateFields(content);
+
+}
+
+function updateFields(json) {
+    for(key in json){
+        document.getElementById(key).value = json[key];
+    }
 }
