@@ -79,8 +79,11 @@ function allDescendantsActivate(node) {
     for (var i = 0; i < node.childNodes.length; i++) {
         var child = node.childNodes[i];
         allDescendantsActivate(child);
-        if (child.style != undefined) {
+        if (child.style !== undefined) {
             child.style.display = "block";
+        }
+        if (child.className === 'error-msg') {
+            child.style.display = 'none';
         }
     }
 }
@@ -111,4 +114,13 @@ function updateFields() {
         }
     }
     window.localStorage.removeItem('content');
+}
+
+function validateRange(element) {
+    console.log(element.value);
+    if (element.value && (parseInt(element.value) < element.min || (element.max && parseInt(element.value) > element.max))) {
+        document.getElementById(element.id + '-error').style.display = 'block';
+    } else if (element.value) {
+        document.getElementById(element.id + '-error').style.display = 'none';
+    }
 }

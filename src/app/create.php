@@ -6,15 +6,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     exit;
 }
 ?>
-<style>
-    .createdText {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translateY(-50%);
-        transform: translateX(-50%);
-    }
-</style>
 <h2 id="created" class="createdText" display="none">Your files were successfully created.</h2>
 <form id="form" method="post" action="generate.php">
     <div class="w3-content w3-padding" style="max-width:1564px">
@@ -97,14 +88,16 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
                 <div>
                     <label for="apache-port"> Port:
-                        <input class="w3-input w3-section w3-border" type="number" min="0" max="65535" name="apache-port" id="apache-port">
+                        <input class="w3-input w3-section w3-border" type="number" min="0" max="65535"
+                               name="apache-port" id="apache-port" onblur="validateRange(this)">
+                        <span id="apache-port-error" class="error-msg" style="display: none;">Port must be between 0 and 65635!</span>
                     </label>
                 </div>
 
                 <div>
                     <label for="apache-error-log-dir"> Error log directory:
                         <input class="w3-input w3-section w3-border" type="text" name="apache-error-log-dir"
-                               id="apache-error-log-dir">
+                               id="apache-error-log-dir" placeholder="If not provided, defaults to /var/error.log">
                     </label>
                 </div>
 
@@ -122,7 +115,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16"> Nginx</h3>
                 <div>
                     <label for="nginx-host"> Hostname:
-                        <input class="w3-input w3-section w3-border" required type="text" name="nginx-host" id="nginx-host">
+                        <input class="w3-input w3-section w3-border" required type="text" name="nginx-host"
+                               id="nginx-host">
                     </label>
                 </div>
 
@@ -158,7 +152,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
                 <div>
                     <label for="server-count"> Number of instances:
-                        <input class="w3-input w3-section w3-border" type="number" min="1" name="server-count" id="server-count">
+                        <input class="w3-input w3-section w3-border" type="number" min="1" name="server-count"
+                               id="server-count">
                     </label>
                 </div>
 
