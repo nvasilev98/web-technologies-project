@@ -8,7 +8,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 require_once "database/DBConnector.php";
 $username = $_SESSION["username"];
 $stmt = DBConnector::getInstance()::getConnection()->prepare("SELECT * FROM files where created_by = :username");
-$stmt->bindParam(":username", $username, PDO::PARAM_STR);
+$stmt->bindParam(":username", $username);
 $stmt->execute();
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $data = array();
@@ -16,11 +16,13 @@ while ($r = $stmt->fetch()) {
     $filename = $r['file'];
     $timestamp = $r['created_at'];
     $content = $r['content'];
+    $version = $r['version'];
 
     $post_data = new stdClass();
     $post_data->filename = $filename;
     $post_data->timestamp = $timestamp;
     $post_data->content = $content;
+    $post_data->version = $version;
     array_push($data, $post_data);
 }
 ?>

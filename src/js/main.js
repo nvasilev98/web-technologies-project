@@ -75,42 +75,39 @@ function changeServer() {
     }
 }
 
-function allDescendantsActivate (node) {
+function allDescendantsActivate(node) {
     for (var i = 0; i < node.childNodes.length; i++) {
-      var child = node.childNodes[i];
-      allDescendantsActivate(child);
-      if(child.style != undefined){
-      child.style.display = "block";
-      }
+        var child = node.childNodes[i];
+        allDescendantsActivate(child);
+        if (child.style != undefined) {
+            child.style.display = "block";
+        }
     }
 }
 
-function allDescendantsDeactivate (node) {
+function allDescendantsDeactivate(node) {
     for (var i = 0; i < node.childNodes.length; i++) {
-      var child = node.childNodes[i];
-      allDescendantsDeactivate(child);
-      if(child.style != undefined){
-      child.style.display = "none"
-      }
+        let child = node.childNodes[i];
+        allDescendantsDeactivate(child);
+        if (child.style != undefined) {
+            child.style.display = "none"
+        }
     }
 }
 
 function edit(content) {
-    var path = window.location.pathname;
+    let path = window.location.pathname;
+    let newPath = path.substring(0, path.lastIndexOf('/') + 1) + "update.php";
     window.localStorage.setItem('content', JSON.stringify(content));
-    var newPath = path.substring(0, path.lastIndexOf('/') + 1) + "update.php";
     window.location.href = newPath;
 }
 
 function updateFields() {
-    var content = window.localStorage.getItem('content');
-    var jsonContent = JSON.parse(content);
-    for(key in jsonContent){
-        if (document.getElementById(key)){
-        document.getElementById(key).value = jsonContent[key];
-        }
-        else {
-            console.log(key);
+    let content = window.localStorage.getItem('content');
+    let jsonContent = JSON.parse(content);
+    for (let key in jsonContent) {
+        if (document.getElementById(key)) {
+            document.getElementById(key).value = jsonContent[key];
         }
     }
     window.localStorage.removeItem('content');
