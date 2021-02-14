@@ -146,3 +146,11 @@ function validateRequired(element) {
 
     }
 }
+
+function validateDirectoryPattern(element) {
+    if (element.value && !/^\/[\w\-\/]+.log$/.test(element.value)) {
+        document.getElementById(element.id + '-pattern-error').style.display = 'block';
+    } else {
+        document.getElementById(element.id + '-pattern-error').style.display = 'none';
+    }
+}
