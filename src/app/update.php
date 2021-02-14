@@ -87,6 +87,10 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 </label>
             </div>
 
+            <div>
+                <label>NOTE: Your application code should be in APP_DIR/src/</label>
+            </div>
+
         </div>
 
         <div class="tab w3-container w3-padding-32">
@@ -229,6 +233,10 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                         <span id="mysql-root-required-error" class="error-msg"
                               style="display: none;">Root Password is required!</span>
                     </label>
+                </div>
+                <div>
+                    <label>NOTE: If you want SQL script file to be executed on container startup please include it in
+                        APP_DIR/scripts/</label>
                 </div>
             </div>
         </div>
