@@ -1,6 +1,6 @@
 <?php
 include 'header.php';
-require_once "config.php";
+require_once "database/DBConnector.php";
 
 $username = $password = "";
 $username_err = $password_err = "";
@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($username_err) && empty($password_err)) {
         $sql = "SELECT id, username, password FROM users WHERE username = :username";
 
-        if ($stmt = $pdo->prepare($sql)) {
+        if ($stmt = DBConnector::getInstance()::getConnection()->prepare($sql)) {
             $stmt->bindParam(":username", $param_username, PDO::PARAM_STR);
 
             $param_username = trim($_POST["username"]);

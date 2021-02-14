@@ -3,21 +3,24 @@ declare(strict_types=1);
 
 include_once('config.php');
 
-class DBConnector {
+class DBConnector
+{
 
     private static $_pdo = null;
     private static $instance = null;
 
 
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (self::$instance == null) {
             self::$instance = new DBConnector();
         }
         return self::$instance;
     }
 
-    private function __construct() {
-        self::$_pdo = new PDO("mysql:host=db;dbname=dockerproject;port=3306", "root", "admin");
+    private function __construct()
+    {
+        self::$_pdo = new PDO("mysql:host=db;dbname=dockerproject;", "root", "admin");
     }
 
     public static function getConnection(): PDO
@@ -25,4 +28,5 @@ class DBConnector {
         return self::$_pdo;
     }
 }
+
 ?>
