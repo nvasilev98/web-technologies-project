@@ -11,17 +11,19 @@ $stmt = DBConnector::getInstance()::getConnection()->prepare("SELECT * FROM file
 $stmt->bindParam(":username", $username, PDO::PARAM_STR);
 $stmt->execute();
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
+$data = array();
 while ($r = $stmt->fetch()) {
     $filename = $r['file'];
-    $user = $r['created_by'];
     $timestamp = $r['created_at'];
     $content = $r['content'];
-    //to do: make in a table;
-    echo "File: " . $filename . " Created at: " . $timestamp;
-    echo "<input type='button' value='edit' onclick='edit($content)'>";
+
+    $post_data = new stdClass();
+    $post_data->filename = $filename;
+    $post_data->timestamp = $timestamp;
+    $post_data->content = $content;
+    array_push($data, $post_data);
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -55,45 +57,39 @@ tr:nth-child(even) {
 <h2>HTML Table</h2>
 <div class="wrapper">
 <table>
-  <tr>
-    <th>Company</th>
-    <th>Contact</th>
-    <th>Country</th>
-  </tr>
-  <tr>
-    <td>Alfreds Futterkiste</td>
-    <td>Maria Anders</td>
-    <td>Germany</td>
-  </tr>
-  <tr>
-    <td>Centro comercial Moctezuma</td>
-    <td>Francisco Chang</td>
-    <td>Mexico</td>
-  </tr>
-  <tr>
-    <td>Ernst Handel</td>
-    <td>Roland Mendel</td>
-    <td>Austria</td>
-  </tr>
-  <tr>
-    <td>Island Trading</td>
-    <td>Helen Bennett</td>
-    <td>UK</td>
-  </tr>
-  <tr>
-    <td>Laughing Bacchus Winecellars</td>
-    <td>Yoshi Tannamuri</td>
-    <td>Canada</td>
-  </tr>
-  <tr>
-    <td>Magazzini Alimentari Riuniti</td>
-    <td>Giovanni Rovelli</td>
-    <td>Italy</td>
-  </tr>
-</table>
+      <thead>
+        <tr>
+          <th>File name</th>
+          <th>Created At</th>
+          <th width="10%" style="text-align:center;">Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
 </div>
 </body>
 </html>
+<script>
+  let data = <?php echo json_encode($data); ?>;
+
+  const formEl = document.querySelector("form");
+  const tbodyEl = document.querySelector("tbody");
+  const tableEl = document.querySelector("table");
+
+  for (i = 0; i < data.length; i++) {
+    tbodyEl.innerHTML += `
+      <tr>
+      <td>${data[i].filename}</td>
+      <td>${data[i].timestamp}</td>
+      <td style="text-align:center;"><button class="w3-button w3-black w3-section" id="${i}">Edit</button></td>
+      </tr>
+    `;
+  }
+
+  function onEditElement(e) {
+    edit(JSON.parse(data[e.target.id].content));
+  }
+  tableEl.addEventListener("click", onEditElement);
+</script>
 <script src="../js/main.js"></script>
-?>
 
