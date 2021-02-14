@@ -152,14 +152,6 @@
 
         <div class="tab w3-container w3-padding-32">
             <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16"> MySql</h3>
-            <label for="configuration-type">
-                Configuration type:
-                <select class="w3-input w3-section w3-border" name="configuration-type" id="configuration-type"
-                        onchange="configurationTypeFunc()">
-                    <option value="input-fields">Input fields</option>
-                    <option value="configuration-file">Configuration File</option>
-                </select>
-            </label>
             <div id="fieldsDiv">
                 <div>
                     <label for="mysql-user" id="mysql-user-label"> MySQL User:
@@ -177,11 +169,6 @@
                     </label>
                 </div>
             </div>
-            <div id="fileDiv">
-                <label for="env-file" id="env-file-label"> Configuration file:
-                    <input class="w3-input w3-section w3-border" type="file" name="env-file" id="env-file">
-                </label>
-            </div>
         </div>
 </form>
 
@@ -197,7 +184,6 @@
 </div>
 
 <div style="text-align:center;margin-top:40px;">
-    <span class="step"></span>
     <span class="step"></span>
     <span class="step"></span>
     <span class="step"></span>

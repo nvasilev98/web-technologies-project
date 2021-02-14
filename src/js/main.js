@@ -1,7 +1,6 @@
 var currentTab = 0;
 document.getElementById("created").style.display = 'none';
 showTab(currentTab);
-configurationTypeFunc();
 changeServer();
 
 function showTab(n) {
@@ -59,16 +58,6 @@ function fixStepIndicator(n) {
         x[i].className = x[i].className.replace(" active", "");
     }
     x[n].className += " active";
-}
-
-function configurationTypeFunc() {
-    if (document.getElementById("configuration-type").value == "configuration-file") {
-        allDescendantsDeactivate(document.getElementById("fieldsDiv"));
-        allDescendantsActivate(document.getElementById("fileDiv"));
-    } else {
-        allDescendantsDeactivate(document.getElementById("fileDiv"));
-        allDescendantsActivate(document.getElementById("fieldsDiv"));
-    }
 }
 
 function changeServer() {
