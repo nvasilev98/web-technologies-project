@@ -9,7 +9,6 @@
         <div class="w3-right w3-hide-small">
             <a href="create.php" class="w3-bar-item w3-button">Create</a>
             <a href="history.php" class="w3-bar-item w3-button">History</a>
-            <a href="logout.php" class="w3-bar-item w3-button">Sign Out</a>
         </div>
     </div>
 </div>

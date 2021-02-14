@@ -1,9 +1,11 @@
 var currentTab = 0;
+document.getElementById("created").style.display = 'none';
 showTab(currentTab);
 configurationTypeFunc();
 changeServer();
 
 function showTab(n) {
+    document.getElementById("created").style.display = 'none';
     var x = document.getElementsByClassName("tab");
     if (x[n]) {
         x[n].style.display = "block";
@@ -27,7 +29,9 @@ function nextPrev(n) {
     x[currentTab].style.display = "none";
     currentTab = currentTab + n;
     if (currentTab >= x.length) {
+        document.getElementById("created").style.display = "block";
         document.getElementById("form").submit();
+        allDescendantsDeactivate(document.getElementById("form"));
         return false;
     }
     showTab(currentTab);

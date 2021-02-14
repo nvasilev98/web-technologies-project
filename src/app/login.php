@@ -1,5 +1,5 @@
 <?php
-include 'header.php';
+include 'loginHeader.php';
 require_once "database/DBConnector.php";
 
 $username = $password = "";

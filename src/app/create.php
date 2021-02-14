@@ -6,6 +6,16 @@
         exit;
     }
 ?>
+<style>
+.createdText {
+            position: absolute;
+            top:50%;
+            left:50%;
+            transform: translateY(-50%);
+            transform: translateX(-50%);
+        }
+</style>
+<h2 id="created" class="createdText" display="none">Your files were successfully created.</h2>
 <form id="form" method="post" action="generate.php">
     <div class="w3-content w3-padding" style="max-width:1564px">
         <div class="tab w3-container w3-padding-32">
@@ -179,6 +189,7 @@
             </div>
         </div>
 </form>
+
 <div style="overflow:auto;">
     <div style="float:right;">
         <button class="w3-button w3-black w3-section" type="button" id="prevBtn" onclick="nextPrev(-1)">
