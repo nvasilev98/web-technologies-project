@@ -2,9 +2,9 @@
 include 'header.php';
 include 'session.php';
 
-require_once "config.php";
+require_once "database/DBConnector.php";
 $username = $_SESSION["username"];
-$stmt = $pdo->prepare("SELECT * FROM files where created_by = :username");
+$stmt = DBConnector::getInstance()::getConnection()->prepare("SELECT * FROM files where created_by = :username");
 $stmt->bindParam(":username", $username, PDO::PARAM_STR);
 $stmt->execute();
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -20,5 +20,4 @@ while ($r = $stmt->fetch()) {
     echo "File content: " . $content . "<br>";
 }
 
-unset($pdo)
 ?>
