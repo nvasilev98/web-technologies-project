@@ -160,6 +160,70 @@ function generateNginxConf($hostname, $errorLog, $accessLog, $useLb, $serverCoun
     return $content;
 }
 
+const dockerCompose =
+"version: \"3.2\"
+services:
+  {{php-services}}
+  web:
+    build: './{{server}}/'
+    ports:
+      - \"{{port}}:80\"
+    volumes:
+      - ./src/:/var/www/html/
+      {{nginx-volume}}
+  db:
+    image: mysql:{{mysql-version}}
+    ports:
+      - \"3306:3306\"
+    env_file:
+      - .env
+    environment:
+      - MYSQL_USER=\${MYSQL_USER}
+      - MYSQL_PASSWORD=\${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=\${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./scripts:/docker-entrypoint-initdb.d
+      - persistent:/var/lib/mysql
+volumes:
+  persistent:";
+
+const nginxVolume =
+"- ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf";
+
+function generateDockerCompose($server, $port, $mysqlVersion, $numberOfInstances) {
+    $content = str_replace('{{port}}', $port, dockerCompose);
+    $content = str_replace('{{server}}', $server, $content);
+    $content = str_replace('{{mysql-version}}', $mysqlVersion, $content);
+
+    if ($server === 'apache') {
+        $content = str_replace('{{nginx-volume}}', '', $content);
+    } else {
+        $content = str_replace('{{nginx-volume}}', nginxVolume, $content);
+    }
+
+    $phpServices = generatePhpServices($numberOfInstances);
+    $content = str_replace('{{php-services}}', $phpServices, $content);
+
+    return $content;
+}
+
+const phpServices =
+"php{{number}}:
+    build: './php/'
+    volumes:
+      - ./src/:/var/www/html/
+    depends_on:
+      - db";
+
+function generatePhpServices($numberOfInstances) {
+    $content = '';
+    for ($i = 1; $i <= $numberOfInstances; $i++) {
+        $service = str_replace('{{number}}', $i, phpServices);
+        $content .= $service .'\n';
+    }
+    return $content;
+}
+
 function isBlank($str)
 {
     return !isset($str) || trim($str) === '';
@@ -191,6 +255,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $apacheVersion = $_POST['apache-version'];
         $confFile = generateApacheConfFile($hostname, $errorLog, $customLog);
         $serverDockerFile = generateApacheDockerfile($apacheVersion, $customLog, $errorLog);
+        $serverCount = 1;
     } else {
         $hostname = $_POST['nginx-host'];
         $port = $_POST['nginx-port'];
@@ -207,16 +272,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $serverDockerFile = generateNginxDockerfile($nginxVersion, $errorLog, $customLog);
     }
 
+    $mysqlVersion = $_POST['mysql-version'];
+    $dockerCompose = generateDockerCompose($server, $port, $mysqlVersion, $serverCount);
+
     $filename = $_POST["name"];
     $username = $_SESSION["username"];
     $json = json_encode($_POST);
 
     if (createFile($filename, $username, $json) === TRUE) {
-        zipFilesAndDownload($filename, $phpDockerfile, $server, $serverDockerFile, $confFile);
+        zipFilesAndDownload($filename, $phpDockerfile, $server, $serverDockerFile, $confFile, $dockerCompose);
     }
 }
 
-function zipFilesAndDownload($filename, $phpDockerFile, $server, $serverDockerfile, $serverConf)
+function zipFilesAndDownload($filename, $phpDockerFile, $server, $serverDockerfile, $serverConf, $dockerCompose)
 {
     $zip = new ZipArchive();
 
@@ -233,6 +301,7 @@ function zipFilesAndDownload($filename, $phpDockerFile, $server, $serverDockerfi
         $zip->addFromString('nginx/Dockerfile', $serverDockerfile);
         $zip->addFromString('nginx/nginx.conf', $serverConf);
     }
+    $zip->addFromString('docker.compose.yml', $dockerCompose);
     $zip->close();
 
     header("Content-type: application/zip");
