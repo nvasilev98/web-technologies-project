@@ -220,6 +220,7 @@ function zipFilesAndDownload($filename, $phpDockerFile, $server, $serverDockerfi
 {
     $zip = new ZipArchive();
 
+    $filename .= '.zip';
     if ($zip->open($filename, ZipArchive::CREATE) !== TRUE) {
         exit("cannot open!!");
     }
