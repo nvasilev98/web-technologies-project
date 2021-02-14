@@ -38,13 +38,18 @@ function nextPrev(n) {
 }
 
 function validateForm() {
-    var x, y, i, valid = true;
-    x = document.getElementsByClassName("tab");
-    y = x[currentTab].getElementsByTagName("input");
-    for (i = 0; i < y.length; i++) {
-        if (y[i].value == "" && y[i].style.display != "none") {
-            y[i].className += " invalid";
+    let valid = true;
+    let requiredFields = document.getElementsByClassName("tab");
+    let inputs = requiredFields[currentTab].getElementsByTagName("input");
+    for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i].required && !inputs[i].value && inputs[i].style.display !== "none") {
+            document.getElementById(inputs[i].id + '-required-error').style.display = 'block';
             valid = false;
+        } else {
+            let errorSpan = document.getElementById(inputs[i].id + '-required-error');
+            if (errorSpan) {
+                errorSpan.style.display = 'none';
+            }
         }
     }
     if (valid) {
@@ -126,10 +131,18 @@ function updateFields() {
 }
 
 function validateRange(element) {
-    console.log(element.value);
     if (element.value && (parseInt(element.value) < element.min || (element.max && parseInt(element.value) > element.max))) {
         document.getElementById(element.id + '-error').style.display = 'block';
     } else if (element.value) {
         document.getElementById(element.id + '-error').style.display = 'none';
+    }
+}
+
+function validateRequired(element) {
+    if (element.required && !element.value) {
+        document.getElementById(element.id + '-required-error').style.display = 'block';
+    } else {
+        document.getElementById(element.id + '-required-error').style.display = 'none';
+
     }
 }
