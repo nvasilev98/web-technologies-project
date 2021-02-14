@@ -130,7 +130,7 @@ const proxyPassLocation =
         proxy_pass http://php;
     }";
 
-function generateNginxConf($hostname, $errorLog, $accessLog, $useLb, $serverCount)
+function generateNginxConf($hostname, $errorLog, $accessLog, $useLb, $serverCount, $projectName)
 {
     if (isBlank($errorLog)) {
         $errorLog = "/var/log/nginx/error.log";
@@ -146,10 +146,11 @@ function generateNginxConf($hostname, $errorLog, $accessLog, $useLb, $serverCoun
     if ($useLb) {
         $servers = "";
         for ($i = 1; $i <= $serverCount; $i++) {
-            $servers .= "    server webtechnologiesproject_php" . $i . "_1:9000;";
-                if ($i != $serverCount) {
-                    $servers .= "\n";
-                }
+            $servers .= "    server {{app-name}}_php" . $i . "_1:9000;";
+            $servers = str_replace('{{app-name}}', $projectName, $servers);
+            if ($i != $serverCount) {
+                $servers .= "\n";
+            }
         }
 
         $upstream = str_replace('{{servers}}', $servers, nginxLb);
@@ -263,6 +264,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $phpVersion = $_POST['php-version'];
     $phpDockerfile = generatePhpDockerfile($phpVersion);
 
+    $filename = $_POST["name"];
     $server = $_POST['server'];
     if ($server === 'apache') {
         $hostname = $_POST['apache-host'];
@@ -285,7 +287,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $serverCount = $_POST['server-count'];
         }
-        $confFile = generateNginxConf($hostname, $errorLog, $customLog, $useLoadBalancer, $serverCount);
+        $confFile = generateNginxConf($hostname, $errorLog, $customLog, $useLoadBalancer, $serverCount, $filename);
         $serverDockerFile = generateNginxDockerfile($nginxVersion, $errorLog, $customLog);
     }
 
@@ -308,7 +310,7 @@ function zipFilesAndDownload($filename, $phpDockerFile, $server, $serverDockerfi
     $zip = new ZipArchive();
 
     $filename .= '.zip';
-    if (!$zip->open($filename, ZipArchive::CREATE|ZipArchive::OVERWRITE)) {
+    if (!$zip->open($filename, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
         exit("cannot open file!!");
     }
 
