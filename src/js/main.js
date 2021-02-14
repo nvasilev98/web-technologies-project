@@ -2,6 +2,7 @@ var currentTab = 0;
 document.getElementById("created").style.display = 'none';
 showTab(currentTab);
 changeServer();
+useLB();
 
 function showTab(n) {
     document.getElementById("created").style.display = 'none';
@@ -72,6 +73,14 @@ function changeServer() {
         allDescendantsActivate(document.getElementById("nginxDiv"));
         allDescendantsActivate(document.getElementById("nginx-version-div"));
 
+    }
+}
+
+function useLB() {
+    if (document.getElementById("use-load-balancer").value == "true") {
+        allDescendantsActivate(document.getElementById("instances"));
+    } else {
+        allDescendantsDeactivate(document.getElementById("instances"));
     }
 }
 

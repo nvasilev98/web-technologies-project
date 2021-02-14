@@ -142,15 +142,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 </div>
 
                 <div>
-                    <label for="use-load-balancer"> Do you want to use Load Balancer ?
-                        <select class="w3-input w3-section w3-border" name="use-load-balancer" id="use-load-balancer">
-                            <option value="false">NO</option>
-                            <option value="true">YES</option>
+                    <label for="use-load-balancer"> Do you want to use Load Balancer?
+                        <select class="w3-input w3-section w3-border" name="use-load-balancer" id="use-load-balancer" onchange="useLB()">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
                         </select>
                     </label>
                 </div>
-
-                <div>
+                <div id="instances">
                     <label for="server-count"> Number of instances:
                         <input class="w3-input w3-section w3-border" type="number" min="1" name="server-count"
                                id="server-count">
