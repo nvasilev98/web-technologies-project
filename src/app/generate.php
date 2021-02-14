@@ -122,7 +122,7 @@ server {
 
 const nginxLb =
 "upstream php {
-    {{servers}}
+{{servers}}
 }";
 
 const proxyPassLocation =
@@ -143,10 +143,13 @@ function generateNginxConf($hostname, $errorLog, $accessLog, $useLb, $serverCoun
     $content = str_replace("{{error-log}}", $errorLog, $content);
     $content = str_replace("{{access-log}}", $accessLog, $content);
 
-    if ($useLb === TRUE) {
+    if ($useLb) {
         $servers = "";
         for ($i = 1; $i <= $serverCount; $i++) {
-            $servers .= "server webtechnologiesproject_php" . $i . "_1:9000;";
+            $servers .= "    server webtechnologiesproject_php" . $i . "_1:9000;";
+                if ($i != $serverCount) {
+                    $servers .= "\n";
+                }
         }
 
         $upstream = str_replace('{{servers}}', $servers, nginxLb);
@@ -163,7 +166,7 @@ function generateNginxConf($hostname, $errorLog, $accessLog, $useLb, $serverCoun
 const dockerCompose =
 "version: \"3.2\"
 services:
-  {{php-services}}
+{{php-services}}
   web:
     build: './{{server}}/'
     ports:
@@ -209,7 +212,7 @@ function generateDockerCompose($server, $port, $mysqlVersion, $numberOfInstances
 }
 
 const phpServices =
-"php{{number}}:
+"  php{{number}}:
     build: './php/'
     volumes:
       - ./src/:/var/www/html/
@@ -222,6 +225,9 @@ function generatePhpServices($numberOfInstances)
     for ($i = 1; $i <= $numberOfInstances; $i++) {
         $service = str_replace('{{number}}', $i, phpServices);
         $content .= $service;
+        if ($i != $numberOfInstances) {
+            $content .= "\n";
+        }
     }
     return $content;
 }
@@ -243,11 +249,6 @@ function generateEnvFile($user, $password, $rootPass)
 function isBlank($str)
 {
     return !isset($str) || trim($str) === '';
-}
-
-function isDir($dir)
-{
-    return $dir === "/" || preg_match('/^\/[\w\-\/]+$/', $dir) == 1;
 }
 
 function getDirectory($str)
@@ -319,7 +320,7 @@ function zipFilesAndDownload($filename, $phpDockerFile, $server, $serverDockerfi
         $zip->addFromString('nginx/Dockerfile', $serverDockerfile);
         $zip->addFromString('nginx/nginx.conf', $serverConf);
     }
-    $zip->addFromString('docker.compose.yml', $dockerCompose);
+    $zip->addFromString('docker-compose.yml', $dockerCompose);
     $zip->addFromString('.env', $envFile);
     $zip->close();
 

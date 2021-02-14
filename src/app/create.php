@@ -177,8 +177,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     <label for="use-load-balancer"> Do you want to use Load Balancer?
                         <select class="w3-input w3-section w3-border" name="use-load-balancer" id="use-load-balancer"
                                 onchange="useLB()">
-                            <option value="true">Yes</option>
-                            <option value="false">No</option>
+                            <option value="TRUE">Yes</option>
+                            <option value="FALSE">No</option>
                         </select>
                     </label>
                 </div>
