@@ -5,7 +5,9 @@ changeServer();
 
 function showTab(n) {
     var x = document.getElementsByClassName("tab");
-    x[n].style.display = "block";
+    if (x[n]) {
+        x[n].style.display = "block";
+    }
     if (n == 0) {
         document.getElementById("prevBtn").style.display = "none";
     } else {
@@ -97,7 +99,8 @@ function allDescendantsDeactivate (node) {
     }
 }
 
-function edit() {
+function edit(content) {
+alert(JSON.stringify(content));
 var path = window.location.pathname;
 var newPath = path.substring(0, path.lastIndexOf('/') + 1) + "update.php";
 window.location.href = newPath;

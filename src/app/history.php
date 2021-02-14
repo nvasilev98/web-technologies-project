@@ -17,10 +17,8 @@ while ($r = $stmt->fetch()) {
     $timestamp = $r['created_at'];
     $content = $r['content'];
     //to do: make in a table;
-    echo "File: " . $filename . " Created by: " . $user . " Created at: " . $timestamp . "<br>";
-    echo "<input type='button' value='edit' onclick='edit()'>";
-    //content should not be visible to client until "EDIT" button is pressed and it's opened in EDIT page.
-    echo "File content: " . $content . "<br>";
+    echo "File: " . $filename . " Created at: " . $timestamp;
+    echo "<input type='button' value='edit' onclick='edit($content)'>";
 }
-
 ?>
+<script src="../js/main.js"></script>
