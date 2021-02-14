@@ -104,16 +104,22 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 </div>
 
                 <div>
-                    <label for="apache-error-log-dir"> Error log directory:
+                    <label for="apache-error-log-dir"> Error log file:
                         <input class="w3-input w3-section w3-border" type="text" name="apache-error-log-dir"
-                               id="apache-error-log-dir" placeholder="If not provided, defaults to stderr">
+                               id="apache-error-log-dir" placeholder="If not provided, defaults to stderr"
+                               onchange="validateDirectoryPattern(this)">
+                        <span id="apache-error-log-dir-pattern-error" class="error-msg"
+                              style="display: none;">The file should be part of a valid path and end as .log</span>
                     </label>
                 </div>
 
                 <div>
-                    <label for="apache-custom-log-dir"> Custom log directory:
+                    <label for="apache-custom-log-dir"> Custom log file:
                         <input class="w3-input w3-section w3-border" type="text" name="apache-custom-log-dir"
-                               id="apache-custom-log-dir" placeholder="If not provided, defaults to stdout">
+                               id="apache-custom-log-dir" placeholder="If not provided, defaults to stdout"
+                               onchange="validateDirectoryPattern(this)">
+                        <span id="apache-custom-log-dir-pattern-error" class="error-msg"
+                              style="display: none;">The file should be part of a valid path and end as .log</span>
                     </label>
                 </div>
 
@@ -142,18 +148,24 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 </div>
 
                 <div>
-                    <label for="nginx-error-log-dir"> Error log directory:
+                    <label for="nginx-error-log-dir"> Error log file:
                         <input class="w3-input w3-section w3-border" type="text" name="nginx-error-log-dir"
                                id="nginx-error-log-dir"
-                               placeholder="If not provided, defaults to /var/log/nginx/error.log">
+                               placeholder="If not provided, defaults to /var/log/nginx/error.log"
+                               onchange="validateDirectoryPattern(this)">
+                        <span id="nginx-error-log-dir-pattern-error" class="error-msg"
+                              style="display: none;">The file should be part of a valid path and end as .log</span>
                     </label>
                 </div>
 
                 <div>
-                    <label for="nginx-custom-log-dir"> Access log directory:
+                    <label for="nginx-custom-log-dir"> Access log file:
                         <input class="w3-input w3-section w3-border" type="text" name="nginx-custom-log-dir"
                                id="nginx-custom-log-dir"
-                               placeholder="If not provided, defaults to /var/log/nginx/access.log">
+                               placeholder="If not provided, defaults to /var/log/nginx/access.log"
+                               onchange="validateDirectoryPattern(this)">
+                        <span id="nginx-custom-log-dir-pattern-error" class="error-msg"
+                              style="display: none;">The file should be part of a valid path and end as .log</span>
                     </label>
                 </div>
 

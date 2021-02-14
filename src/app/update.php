@@ -1,19 +1,19 @@
 <?php
-    include 'header.php';
-    session_start();
-    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-        header("location: login.php");
-        exit;
-    }
+include 'header.php';
+session_start();
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+    header("location: login.php");
+    exit;
+}
 ?>
 <style>
-.createdText {
-            position: absolute;
-            top:50%;
-            left:50%;
-            transform: translateY(-50%);
-            transform: translateX(-50%);
-        }
+    .createdText {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateY(-50%);
+        transform: translateX(-50%);
+    }
 </style>
 <body onload="updateFields()">
 <h2 id="created" class="createdText" display="none">Your files were successfully created.</h2>
@@ -24,7 +24,10 @@
 
             <div>
                 <label for="name"> Name of the project:
-                    <input class="w3-input w3-section w3-border" type="text" name="name" id="name">
+                    <input class="w3-input w3-section w3-border" required type="text" name="name" id="name"
+                           onchange="validateRequired(this)">
+                    <span id="name-required-error" class="error-msg"
+                          style="display: none;">Project name is required!</span>
                 </label>
             </div>
 
@@ -65,9 +68,9 @@
                 <label for="nginx-version">
                     Nginx Version:
                     <select class="w3-input w3-section w3-border" name="nginx-version" id="nginx-version">
-                        <option value="2.4">2.4</option>
-                        <option value="2.2">2.2</option>
-                        <option value="2">2</option>
+                        <option value="1.19">1.19</option>
+                        <option value="1.18">1.18</option>
+                        <option value="1.17">1.17</option>
                     </select>
                 </label>
             </div>
@@ -92,27 +95,41 @@
                 <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16"> Apache</h3>
                 <div>
                     <label for="apache-host"> Hostname:
-                        <input class="w3-input w3-section w3-border" type="text" name="apache-host" id="apache-host">
+                        <input class="w3-input w3-section w3-border" required type="text" name="apache-host"
+                               id="apache-host"
+                               onchange="validateRequired(this)">
+                        <span id="apache-host-required-error" class="error-msg"
+                              style="display: none;">Host is required!</span>
                     </label>
                 </div>
 
                 <div>
                     <label for="apache-port"> Port:
-                        <input class="w3-input w3-section w3-border" type="text" name="apache-port" id="apache-port">
+                        <input class="w3-input w3-section w3-border" required type="text" name="apache-port" min="0"
+                               max="65535" id="apache-port" onchange="validateRange(this); validateRequired(this)">
+                        <span id="apache-port-required-error" class="error-msg"
+                              style="display: none;">Port is required!</span>
+                        <span id="apache-port-error" class="error-msg" style="display: none;">Port must be between 0 and 65635!</span>
                     </label>
                 </div>
 
                 <div>
-                    <label for="apache-error-log-dir"> Error log directory:
+                    <label for="apache-error-log-dir"> Error log file:
                         <input class="w3-input w3-section w3-border" type="text" name="apache-error-log-dir"
-                            id="apache-error-log-dir">
+                               id="apache-error-log-dir" placeholder="If not provided, defaults to stderr"
+                               onchange="validateDirectoryPattern(this)">
+                        <span id="apache-error-log-dir-pattern-error" class="error-msg"
+                              style="display: none;">The file should be part of a valid path and end as .log</span>
                     </label>
                 </div>
 
                 <div>
-                    <label for="apache-custom-log-dir"> Custom log directory:
-                        <input class="w3-input w3-section w3-border" type="apache-text" name="apache-custom-log-dir"
-                            id="apache-custom-log-dir">
+                    <label for="apache-custom-log-dir"> Custom log file:
+                        <input class="w3-input w3-section w3-border" type="text" name="apache-custom-log-dir"
+                               id="apache-custom-log-dir" placeholder="If not provided, defaults to stdout"
+                               onchange="validateDirectoryPattern(this)">
+                        <span id="apache-custom-log-dir-pattern-error" class="error-msg"
+                              style="display: none;">The file should be part of a valid path and end as .log</span>
                     </label>
                 </div>
 
@@ -123,27 +140,43 @@
                 <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16"> Nginx</h3>
                 <div>
                     <label for="nginx-host"> Hostname:
-                        <input class="w3-input w3-section w3-border" type="text" name="nginx-host" id="nginx-host">
+                        <input class="w3-input w3-section w3-border" required type="text" name="nginx-host"
+                               id="nginx-host"
+                               onchange="validateRequired(this)">
+                        <span id="nginx-host-required-error" class="error-msg"
+                              style="display: none;">Host is required!</span>
                     </label>
                 </div>
 
                 <div>
                     <label for="nginx-port"> Port:
-                        <input class="w3-input w3-section w3-border" type="text" name="nginx-port" id="nginx-port">
+                        <input class="w3-input w3-section w3-border" type="number" min="0" max="65535" name="nginx-port"
+                               id="nginx-port" required onchange="validateRange(this); validateRequired(this)">
+                        <span id="nginx-port-error" class="error-msg" style="display: none;">Port must be between 0 and 65635!</span>
+                        <span id="nginx-port-required-error" class="error-msg"
+                              style="display: none;">Port is required!</span>
                     </label>
                 </div>
 
                 <div>
-                    <label for="nginx-error-log-dir"> Error log directory:
+                    <label for="nginx-error-log-dir"> Error log file:
                         <input class="w3-input w3-section w3-border" type="text" name="nginx-error-log-dir"
-                            id="nginx-error-log-dir">
+                               id="nginx-error-log-dir"
+                               placeholder="If not provided, defaults to /var/log/nginx/error.log"
+                               onchange="validateDirectoryPattern(this)">
+                        <span id="nginx-error-log-dir-pattern-error" class="error-msg"
+                              style="display: none;">The file should be part of a valid path and end as .log</span>
                     </label>
                 </div>
 
                 <div>
-                    <label for="nginx-custom-log-dir"> Custom log directory:
+                    <label for="nginx-custom-log-dir"> Access log file:
                         <input class="w3-input w3-section w3-border" type="text" name="nginx-custom-log-dir"
-                            id="nginx-custom-log-dir">
+                               id="nginx-custom-log-dir"
+                               placeholder="If not provided, defaults to /var/log/nginx/access.log"
+                               onchange="validateDirectoryPattern(this)">
+                        <span id="nginx-custom-log-dir-pattern-error" class="error-msg"
+                              style="display: none;">The file should be part of a valid path and end as .log</span>
                     </label>
                 </div>
 
@@ -173,17 +206,28 @@
             <div id="fieldsDiv">
                 <div>
                     <label for="mysql-user" id="mysql-user-label"> MySQL User:
-                        <input class="w3-input w3-section w3-border" type="text" name="mysql-user" id="mysql-user">
+                        <input class="w3-input w3-section w3-border" required type="text" name="mysql-user"
+                               id="mysql-user"
+                               onchange="validateRequired(this)">
                     </label>
+                    <span id="mysql-user-required-error" class="error-msg"
+                          style="display: none;">User is required!</span>
                 </div>
                 <div>
                     <label for="mysql-password" id="mysql-password-label"> MySQL Password:
-                        <input class="w3-input w3-section w3-border" type="text" name="mysql-password" id="mysql-password">
+                        <input class="w3-input w3-section w3-border" required type="text" name="mysql-password"
+                               id="mysql-password" onchange="validateRequired(this)">
+                        <span id="mysql-password-required-error" class="error-msg"
+                              style="display: none;">Password is required!</span>
                     </label>
                 </div>
                 <div>
                     <label for="mysql-root" id="mysql-root-label"> MySQL Root Password:
-                        <input class="w3-input w3-section w3-border" type="text" name="mysql-root" id="mysql-root">
+                        <input class="w3-input w3-section w3-border" required type="text" name="mysql-root"
+                               id="mysql-root"
+                               onchange="validateRequired(this)">
+                        <span id="mysql-root-required-error" class="error-msg"
+                              style="display: none;">Root Password is required!</span>
                     </label>
                 </div>
             </div>
