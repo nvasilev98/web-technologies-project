@@ -1,5 +1,10 @@
 <?php
     include 'header.php';
+    session_start();
+    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+        header("location: login.php");
+        exit;
+    }
 ?>
 <form id="form" method="post" action="generate.php">
     <div class="w3-content w3-padding" style="max-width:1564px">
