@@ -112,7 +112,7 @@ server {
     location ~ \.php$ {
         try_files \$uri =404;
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass php:9000;
+        fastcgi_pass php{{php-upstream-port}};
         fastcgi_index index.php;
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
@@ -144,6 +144,7 @@ function generateNginxConf($hostname, $errorLog, $accessLog, $useLb, $serverCoun
     $content = str_replace("{{access-log}}", $accessLog, $content);
 
     if ($useLb) {
+        $content = str_replace('{{php-upstream-port}}', '', $content);
         $servers = "";
         for ($i = 1; $i <= $serverCount; $i++) {
             $servers .= "    server {{app-name}}_php" . $i . "_1:9000;";
@@ -157,6 +158,7 @@ function generateNginxConf($hostname, $errorLog, $accessLog, $useLb, $serverCoun
         $content = str_replace('{{load-balancer}}', $upstream, $content);
         $content = str_replace('{{lb-pass-pass}}', proxyPassLocation, $content);
     } else {
+        $content = str_replace('{{php-upstream-port}}', ':9000', $content);
         $content = str_replace('{{load-balancer}}', '', $content);
         $content = str_replace('{{lb-pass-pass}}', '', $content);
     }
