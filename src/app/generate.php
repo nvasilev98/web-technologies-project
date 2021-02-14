@@ -183,17 +183,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $port = $_POST["port"];
     $customLog = $_POST["custom-log-dir"];
 
-    $nginxConf = generateApacheConfFile($hostname, $port, $errorLog, $customLog);
+    $apacheConf = generateApacheConfFile($hostname, $port, $errorLog, $customLog);
 
     $filename = $_POST["name"];
     $username = $_SESSION["username"];
     $json = json_encode($_POST);
 
     if (createFile($filename, $username, $json) === FALSE) {
-        echo 'Cannot insert into DB';
-    } else {
-        echo 'Successfully inserted!';
+        zipFilesAndDownload($apacheConf);
+    }
+}
+
+function zipFilesAndDownload($apacheConf)
+{
+    $zip = new ZipArchive();
+
+    if ($zip->open('test.zip', ZipArchive::CREATE) !== TRUE) {
+        exit("cannot open!!");
     }
 
+    $zip->addFromString("/apache/demo.apache.conf", $apacheConf);
+    $zip->close();
+
+    header("Content-type: application/zip");
+    header("Content-Disposition: attachment; filename=test.zip");
+    header("Content-length: " . filesize("test.zip"));
+    header("Pragma: no-cache");
+    header("Expires: 0");
+    readfile("test.zip");
 }
+
 ?>
