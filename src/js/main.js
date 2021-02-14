@@ -14,7 +14,7 @@ function showTab(n) {
         document.getElementById("prevBtn").style.display = "inline";
     }
     if (n == (x.length - 1)) {
-        document.getElementById("nextBtn").innerHTML = "Submit";
+        document.getElementById("nextBtn").innerHTML = "Download";
     } else {
         document.getElementById("nextBtn").innerHTML = "Next";
     }
@@ -71,10 +71,14 @@ function changeServer() {
     console.log("ASDdsasad");
     if (document.getElementById("server").value == "apache") {
         allDescendantsDeactivate(document.getElementById("nginxDiv"));
+        allDescendantsDeactivate(document.getElementById("nginx-version-div"));
         allDescendantsActivate(document.getElementById("apacheDiv"));
+        allDescendantsActivate(document.getElementById("apache-version-div"));
     } else {
         allDescendantsDeactivate(document.getElementById("apacheDiv"));
+        allDescendantsDeactivate(document.getElementById("apache-version-div"));
         allDescendantsActivate(document.getElementById("nginxDiv"));
+        allDescendantsActivate(document.getElementById("nginx-version-div"));
 
     }
 }

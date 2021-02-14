@@ -39,7 +39,7 @@
                     </select>
             </div>
 
-            <div>
+            <div id="apache-version-div">
                 <label for="apache-version">
                     Apache Version:
                     <select class="w3-input w3-section w3-border" name="apache-version" id="apache-version">
@@ -50,7 +50,7 @@
                 </label>
             </div>
 
-            <div>
+            <div id="nginx-version-div">
                 <label for="nginx-version">
                     Nginx Version:
                     <select class="w3-input w3-section w3-border" name="nginx-version" id="nginx-version">
@@ -99,7 +99,7 @@
                 </div>
 
                 <div>
-                    <label for="apache-custom-log-dir"> Error log directory:
+                    <label for="apache-custom-log-dir"> Custom log directory:
                         <input class="w3-input w3-section w3-border" type="apache-text" name="apache-custom-log-dir"
                             id="apache-custom-log-dir">
                     </label>
@@ -130,7 +130,7 @@
                 </div>
 
                 <div>
-                    <label for="nginx-custom-log-dir"> Error log directory:
+                    <label for="nginx-custom-log-dir"> Custom log directory:
                         <input class="w3-input w3-section w3-border" type="text" name="nginx-custom-log-dir"
                             id="nginx-custom-log-dir">
                     </label>
