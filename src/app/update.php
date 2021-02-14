@@ -1,4 +1,7 @@
-<?php include 'header.php'; ?>
+<?php
+    include 'header.php';
+    include 'session.php';
+?>
 <form id="form" method="post" action="generate.php">
     <div class="w3-content w3-padding" style="max-width:1564px">
         <div class="tab w3-container w3-padding-32">
