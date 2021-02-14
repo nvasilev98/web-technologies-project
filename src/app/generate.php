@@ -1,5 +1,7 @@
 <?php
 
+include_once 'database/DbExecutor.php';
+
 const phpDockerfile =
 "FROM php:{{php-version}}-fpm
 RUN docker-php-ext-install mysqli
@@ -183,9 +185,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $nginxConf = generateApacheConfFile($hostname, $port, $errorLog, $customLog);
 
-    header("Content-Type: application/text");
-    header("Content-Disposition: attachment; filename=nginx.conf");
+    $filename = $_POST["name"];
+    $username = $_SESSION["username"];
+    $json = json_encode($_POST);
 
-    echo $nginxConf;
+    if (createFile($filename, $username, $json) === FALSE) {
+        echo 'Cannot insert into DB';
+    } else {
+        echo 'Successfully inserted!';
+    }
+
 }
 ?>

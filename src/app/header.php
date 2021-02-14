@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!($_SERVER['REQUEST_URI'] === '/app/login.php' || $_SERVER['REQUEST_URI'] === '/app/register.php')
+    && (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true)) {
+    header("location: login.php");
+    exit;
+}
+?>
 <title>ЕNA Project</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

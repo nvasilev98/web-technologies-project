@@ -56,13 +56,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql = "INSERT INTO users (username, password) VALUES (:username, :password)";
 
         if ($stmt = DBConnector::getInstance()::getConnection()->prepare($sql)) {
-            $stmt->bindParam(":username", $param_username, PDO::PARAM_STR);
-            $stmt->bindParam(":password", $param_password, PDO::PARAM_STR);
+            $stmt->bindParam(":username", $param_username);
+            $stmt->bindParam(":password", $param_password);
 
             $param_username = $username;
             $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
 
-            if ($stmt->execute()) {
+            if ($stmt->execute() === TRUE) {
                 header("location: login.php");
             } else {
                 echo "Something went wrong. Please try again later.";
