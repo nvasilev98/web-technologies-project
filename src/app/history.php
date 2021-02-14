@@ -61,8 +61,9 @@ tr:nth-child(even) {
 <table>
       <thead>
         <tr>
-          <th>File name</th>
-          <th>Created At</th>
+            <th width="15%" style="text-align:center;">Created At</th>
+            <th width="70%" style="text-align:center;">File name</th>
+            <th style="text-align:center;">Version</th>
           <th width="10%" style="text-align:center;">Action</th>
         </tr>
       </thead>
@@ -79,10 +80,11 @@ tr:nth-child(even) {
   const tableEl = document.querySelector("table");
 
   for (i = 0; i < data.length; i++) {
-    tbodyEl.innerHTML += `
+      tbodyEl.innerHTML += `
       <tr>
-      <td>${data[i].filename}</td>
-      <td>${data[i].timestamp}</td>
+      <td style="text-align:center;">${data[i].timestamp}</td>
+      <td style="text-align:center;">${data[i].filename}</td>
+      <td style="text-align:center;">${data[i].version}</td>
       <td style="text-align:center;"><button class="w3-button w3-black w3-section" id="${i}">Edit</button></td>
       </tr>
     `;

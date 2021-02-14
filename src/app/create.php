@@ -1,19 +1,19 @@
 <?php
-    include 'header.php';
-    session_start();
-    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-        header("location: login.php");
-        exit;
-    }
+include 'header.php';
+session_start();
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+    header("location: login.php");
+    exit;
+}
 ?>
 <style>
-.createdText {
-            position: absolute;
-            top:50%;
-            left:50%;
-            transform: translateY(-50%);
-            transform: translateX(-50%);
-        }
+    .createdText {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateY(-50%);
+        transform: translateX(-50%);
+    }
 </style>
 <h2 id="created" class="createdText" display="none">Your files were successfully created.</h2>
 <form id="form" method="post" action="generate.php">
@@ -97,21 +97,21 @@
 
                 <div>
                     <label for="apache-port"> Port:
-                        <input class="w3-input w3-section w3-border" type="text" name="apache-port" id="apache-port">
+                        <input class="w3-input w3-section w3-border" type="number" min="0" max="65535" name="apache-port" id="apache-port">
                     </label>
                 </div>
 
                 <div>
                     <label for="apache-error-log-dir"> Error log directory:
                         <input class="w3-input w3-section w3-border" type="text" name="apache-error-log-dir"
-                            id="apache-error-log-dir">
+                               id="apache-error-log-dir">
                     </label>
                 </div>
 
                 <div>
                     <label for="apache-custom-log-dir"> Custom log directory:
-                        <input class="w3-input w3-section w3-border" type="apache-text" name="apache-custom-log-dir"
-                            id="apache-custom-log-dir">
+                        <input class="w3-input w3-section w3-border" type="text" name="apache-custom-log-dir"
+                               id="apache-custom-log-dir">
                     </label>
                 </div>
 
@@ -122,39 +122,43 @@
                 <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16"> Nginx</h3>
                 <div>
                     <label for="nginx-host"> Hostname:
-                        <input class="w3-input w3-section w3-border" type="text" name="nginx-host" id="nginx-host">
+                        <input class="w3-input w3-section w3-border" required type="text" name="nginx-host" id="nginx-host">
                     </label>
                 </div>
 
                 <div>
                     <label for="nginx-port"> Port:
-                        <input class="w3-input w3-section w3-border" type="text" name="nginx-port" id="nginx-port">
+                        <input class="w3-input w3-section w3-border" type="number" min="0" max="65535" name="nginx-port"
+                               id="nginx-port">
                     </label>
                 </div>
 
                 <div>
                     <label for="nginx-error-log-dir"> Error log directory:
                         <input class="w3-input w3-section w3-border" type="text" name="nginx-error-log-dir"
-                            id="nginx-error-log-dir">
+                               id="nginx-error-log-dir">
                     </label>
                 </div>
 
                 <div>
                     <label for="nginx-custom-log-dir"> Access log directory:
                         <input class="w3-input w3-section w3-border" type="text" name="nginx-custom-log-dir"
-                            id="nginx-custom-log-dir">
+                               id="nginx-custom-log-dir">
                     </label>
                 </div>
 
                 <div>
                     <label for="use-load-balancer"> Do you want to use Load Balancer ?
-                        <input type="checkbox" id="use-load-balancer">
+                        <select class="w3-input w3-section w3-border" name="use-load-balancer" id="use-load-balancer">
+                            <option value="false">NO</option>
+                            <option value="true">YES</option>
+                        </select>
                     </label>
                 </div>
 
                 <div>
                     <label for="server-count"> Number of instances:
-                        <input class="w3-input w3-section w3-border" type="text" name="server-count" id="server-count">
+                        <input class="w3-input w3-section w3-border" type="number" min="1" name="server-count" id="server-count">
                     </label>
                 </div>
 
@@ -171,7 +175,8 @@
                 </div>
                 <div>
                     <label for="mysql-password" id="mysql-password-label"> MySQL Password:
-                        <input class="w3-input w3-section w3-border" type="text" name="mysql-password" id="mysql-password">
+                        <input class="w3-input w3-section w3-border" type="text" name="mysql-password"
+                               id="mysql-password">
                     </label>
                 </div>
                 <div>
