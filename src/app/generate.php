@@ -61,38 +61,63 @@ const apacheDockerfile =
 RUN apk update; \
     apk upgrade;
 
-RUN [\"/bin/bash\",\"-c\", \"[ ! -d '{{error-log-dir}}' ] && mkdir -p {{error-log-dir}}\"]
-RUN [\"/bin/bash\",\"-c\", \"[ ! -d '{{custom-log-dir}}' ] && mkdir -p {{custom-log-dir}}\"]
+{{error-log-dir}}
+{{custom-log-dir}}
 
 COPY project.apache.conf /usr/local/apache2/conf/project.apache.conf
 RUN echo \"Include /usr/local/apache2/conf/project.apache.conf\" \
     >> /usr/local/apache2/conf/httpd.conf";
 
+const createDir =
+"RUN [\"/bin/sh\",\"-c\", \"[ ! -d '{{dir}}' ] && mkdir -p {{dir}}\"]";
+
 function generateApacheDockerfile($version, $errorLog, $customLog)
 {
-    $errorLogDir = getDirectory($errorLog);
-    $customLogDir = getDirectory($customLog);
+    $content = apacheDockerfile;
+    $errorLogDir = "";
+    if (!isBlank($errorLog) && getDirectory($errorLog) !== '') {
+        $errorLogDir = getDirectory($errorLog);
+        $createDirCommand = str_replace("{{dir}}", $errorLogDir, createDir);
+        $content = str_replace('{{error-log-dir}}', $createDirCommand, $content);
+    } else {
+        $content = str_replace('{{error-log-dir}}', '', $content);
+    }
+    if (!isBlank($customLog) && getDirectory($customLog) !== '' && $errorLogDir !== getDirectory($customLog)) {
+        $customLogDir = getDirectory($customLog);
+        $createDirCommand = str_replace("{{dir}}", $customLogDir, createDir);
+        $content = str_replace('{{custom-log-dir}}', $createDirCommand, $content);
+    } else {
+        $content = str_replace('{{custom-log-dir}}', '', $content);
+    }
 
-    $content = str_replace("{{apache-version}}", $version, apacheDockerfile);
-    $content = str_replace("{{error-log-dir}}", $errorLogDir, $content);
-    $content = str_replace("{{custom-log-dir}}", $customLogDir, $content);
+    $content = str_replace("{{apache-version}}", $version, $content);
 
     return $content;
 }
 
 const nginxDockerFile =
 "FROM nginx:{{version}}
-
-RUN [\"/bin/bash\", \"-c\", \"[ ! -d '{{error-log}}' ] && mkdir -p /{{error-log}}\"]
-RUN [\"/bin/bash\", \"-c\", \"[ ! -d '{{custom-log}}' ] && mkdir -p /{{custom-log}}\"]";
+{{error-log-dir}}
+{{access-log-dir}}";
 
 function generateNginxDockerfile($nginxVersion, $errorLog, $customLog)
 {
-    $errorLog = getDirectory($errorLog);
+    $content = nginxDockerFile;
+    if (!isBlank($errorLog) && getDirectory($errorLog) !== '') {
+        $errorLogDir = str_replace('{{dir}}', getDirectory($errorLog), createDir);
+        $content = str_replace('{{error-log-dir}}', $errorLogDir, $content);
+    } else {
+        $content = str_replace('{{error-log-dir}}', '', $content);
+    }
 
-    $content = str_replace('{{version}}', $nginxVersion, nginxDockerFile);
-    $content = str_replace('{{error-log}}', $errorLog, $content);
-    $content = str_replace('{{custom-log}}', $customLog, $content);
+    if (!isBlank($customLog) && getDirectory($customLog) !== '' && getDirectory($customLog) !== getDirectory($errorLog)) {
+        $customLogDir = str_replace('{{dir}}', getDirectory($customLog), createDir);
+        $content = str_replace('{{access-log-dir}}', $customLogDir, $content);
+    } else {
+        $content = str_replace('{{access-log-dir}}', '', $content);
+    }
+
+    $content = str_replace('{{version}}', $nginxVersion, $content);
 
     return $content;
 }
@@ -126,7 +151,7 @@ const nginxLb =
 }";
 
 const proxyPassLocation =
-"   location / {
+"location / {
         proxy_pass http://php;
     }";
 
